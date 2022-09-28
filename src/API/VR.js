@@ -1,5 +1,7 @@
-import React from 'react';
-
+const API_BASE_URL = "https://rata.digitraffic.fi/api/v1/";
+const API_BASE_TRAINS = 'trains/';
+const API_BASE_TRAIN_LOCATIONS = 'train-locations/';
+const API_BASE_LATEST = 'latest';
 /**
  * This function gets info about a specific train.
  *
@@ -9,7 +11,7 @@ import React from 'react';
  * @return a JSON object with the train
  */
 export const getTrainInfo = (trainNumber, date = "latest") => {
-    let callStr = 'https://rata.digitraffic.fi/api/v1/trains/' + date + "/" + trainNumber.toString();
+    let callStr = API_BASE_URL + API_BASE_TRAINS + date + "/" + trainNumber.toString();
     return fetchJsonData(callStr);  
 };
 
@@ -20,7 +22,7 @@ export const getTrainInfo = (trainNumber, date = "latest") => {
  * @returns JSON obj with all the trains
  */
 export const getTrains = (date) => {
-  let callStr = 'https://rata.digitraffic.fi/api/v1/trains/' + date;
+  let callStr = API_BASE_URL + API_BASE_TRAINS + date;
   return fetchJsonData(callStr);
 };
 
@@ -31,13 +33,12 @@ export const getTrains = (date) => {
  * @returns JSON obj with all the locations of the active trains
  */
  export const getAllTrainLocations = (bbox = "") => {
-    let callStr = 'https://rata.digitraffic.fi/api/v1/train-locations/latest';
+    let callStr = API_BASE_URL + API_BASE_TRAIN_LOCATIONS + API_BASE_LATEST;
 
     if(bbox != "")
     {
         callStr+= "?bbox=" + bbox;
     }
-    console.log(callStr);
     return fetchJsonData(callStr);
   };
 
