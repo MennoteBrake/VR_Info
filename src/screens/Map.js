@@ -1,26 +1,30 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { SafeAreaView, StyleSheet } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 
+import { getAllTrainLocations } from '../API/VR';
+
 const MapScreen = () => {
-  const [trains, setTrains] = useState([
-    {
-      latlng: {
-        latitude: 60.18833,
-        longitude: 24.9300
-      },
-      title: "Train 1",
-      description: "IC932"
-    },
-    {
-      latlng: {
-        latitude: 60.19534,
-        longitude: 24.94028
-      },
-      title: "Train 2",
-      description: "R"
+  const [trains, setTrains] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await getAllTrainLocations();
+      setTrains(data);
     }
-  ]);
+
+    fetchData().catch(console.error);
+
+    const interval = setInterval(() => {
+      fetchData().catch(console.error);
+    }, 20000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const onMarkerPress = (trainNumber) => {
+    //TODO: Navigate to train info screen with this train number
+  };
 
   return(
     <SafeAreaView style={styles.container}>
@@ -35,7 +39,19 @@ const MapScreen = () => {
       >
         {
           trains.map((train, index) => {
-            return(<Marker key={index} coordinate={train.latlng} title={train.title} description={train.description} />)
+            return(
+              <Marker
+                key={index}
+                coordinate={
+                  {
+                    latitude: train.location.coordinates[1],
+                    longitude: train.location.coordinates[0]
+                  }}
+                title={`Train ${train.trainNumber}`}
+                description={`Speed: ${train.speed} km/h`}
+                image={{uri: 'train_pin'}}
+                onCalloutPress={() => onMarkerPress(train.trainNumber)} />
+            );
           })
         }
       </MapView>
