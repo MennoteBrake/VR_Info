@@ -2,9 +2,9 @@ import { useEffect, useState } from 'react';
 import { SafeAreaView, StyleSheet } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 
-import { getAllTrainLocations } from '../API/VR';
+import { getAllTrainLocations } from '../../API/VR';
 
-const MapScreen = () => {
+const MapScreen = ({ navigation }) => {
   const [trains, setTrains] = useState([]);
 
   useEffect(() => {
@@ -22,8 +22,10 @@ const MapScreen = () => {
     return () => clearInterval(interval);
   }, []);
 
-  const onMarkerPress = (trainNumber) => {
-    //TODO: Navigate to train info screen with this train number
+  const onMarkerPress = (trainNumber, departureDate) => {
+    navigation.navigate("Train Details", {
+      trainNumber: trainNumber
+    });
   };
 
   return(
