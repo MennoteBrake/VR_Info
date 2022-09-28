@@ -7,9 +7,14 @@ import HomeScreen from './screens/Home';
 import MapScreen from './screens/Map';
 import SettingsScreen from './screens/Settings';
 
+import {initDB} from "./db/VRIdb"
+
 const Tab = createBottomTabNavigator();
 
 const App = () => {
+  
+  initDB();
+  
   return (
     <NavigationContainer>
       <Tab.Navigator
