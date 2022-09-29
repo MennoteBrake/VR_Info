@@ -25,6 +25,7 @@ const TrainDetailsScreen = ({ route, navigation }) => {
       }
     ]
   });
+  const [schedule, setSchedule] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -34,7 +35,12 @@ const TrainDetailsScreen = ({ route, navigation }) => {
         return;
       }
 
+      const stoppingAt = trainData[0].timeTableRows.filter((el) => {
+        return el.trainStopping && el.commercialStop
+      });
+
       setTrain(trainData[0]);
+      setSchedule(stoppingAt);
     }
 
     fetchData().catch(console.error);
@@ -60,22 +66,27 @@ const TrainDetailsScreen = ({ route, navigation }) => {
         </View>
       </View>
       <ScrollView style={styles.schedule}>
-        {
-          train.timeTableRows.map((item, index) => {
+        { 
+          schedule.map((item, index) => {
             let date = new Date(item.scheduledTime);
-
-            if(!item.trainStopping) {
-              return;
-            }
 
             return(
               <View key={index} style={styles.scheduleRow}>
-                <Text style={{width: '20%'}}>{item.stationShortCode}</Text>
+                <Text style={{width: '15%'}}>{item.stationShortCode}</Text>
                 <Text style={{width: '25%'}}>{item.type}</Text>
-                <Text style={{width: '10%'}}>{item.commercialTrack}</Text>
-                <View style={styles.scheduleTime}>
-                  <Ionicons name="time-outline" size={15} color="#000000"/>
-                  <Text>{`${date.getHours()}:${(date.getMinutes() < 10 ? '0' : '') + date.getMinutes()}`}</Text>
+                <Text style={{width: '20%'}}>{item.commercialTrack}</Text>
+                <View style={styles.scheduleTimeCol}>
+                  <View style={styles.scheduleTime}>
+                    <Ionicons name="time-outline" size={15} color="#000000"/>
+                    <Text>{`${date.getHours()}:${(date.getMinutes() < 10 ? '0' : '') + date.getMinutes()}`}</Text>
+                  </View>
+                  <View style={styles.scheduleDifference}>
+                    {(item.differenceInMinutes > 0) ? (
+                      <Text style={styles.delay}>{`+${item.differenceInMinutes}`}</Text>
+                    ) : (
+                      <Text style={styles.onTime}>On time</Text>
+                    )}
+                  </View>
                 </View>
               </View>
             );
@@ -120,9 +131,18 @@ const styles = StyleSheet.create({
     borderColor: '#e2e2e2',
     padding: 20
   },
+  scheduleTimeCol: {
+    flexDirection: 'column',
+    alignItems: 'flex-end',
+  },
   scheduleTime: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: 'row'
+  },
+  delay: {
+    color: '#d11919'
+  },
+  onTime: {
+    color: '#00b451'
   }
 });
 

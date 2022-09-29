@@ -40,21 +40,23 @@ const MapScreen = ({ navigation }) => {
         }}
       >
         {
-          trains.map((train, index) => {
-            return(
-              <Marker
-                key={index}
-                coordinate={
-                  {
-                    latitude: train.location.coordinates[1],
-                    longitude: train.location.coordinates[0]
-                  }}
-                title={`Train ${train.trainNumber}`}
-                description={`Speed: ${train.speed} km/h`}
-                image={{uri: 'train_pin'}}
-                onCalloutPress={() => onMarkerPress(train.trainNumber)} />
-            );
-          })
+          trains && (
+            trains.map((train, index) => {
+              return(
+                <Marker
+                  key={index}
+                  coordinate={
+                    {
+                      latitude: train.location.coordinates[1],
+                      longitude: train.location.coordinates[0]
+                    }}
+                  title={`Train ${train.trainNumber}`}
+                  description={`Speed: ${train.speed} km/h`}
+                  image={{uri: 'train_pin'}}
+                  onCalloutPress={() => onMarkerPress(train.trainNumber)} />
+              );
+            })
+          )
         }
       </MapView>
     </SafeAreaView>
