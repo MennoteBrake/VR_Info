@@ -65,7 +65,7 @@ const TrainDetailsScreen = ({ route, navigation }) => {
           <Text style={styles.summaryItemTextBig}>{train.timeTableRows[train.timeTableRows.length-1].stationShortCode}</Text>
         </View>
       </View>
-      <ScrollView style={styles.schedule}>
+      <ScrollView>
         { 
           schedule.map((item, index) => {
             let date = new Date(item.scheduledTime);
@@ -92,6 +92,9 @@ const TrainDetailsScreen = ({ route, navigation }) => {
             );
           })
         }
+        <View style={styles.footer}>
+          <Text>Service operated by {train.operatorShortCode}</Text>
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -143,6 +146,10 @@ const styles = StyleSheet.create({
   },
   onTime: {
     color: '#00b451'
+  },
+  footer: {
+    marginTop: 10,
+    alignItems: 'center'
   }
 });
 
