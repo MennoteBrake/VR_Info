@@ -44,35 +44,42 @@ const TrainDetailsScreen = ({ route, navigation }) => {
     }
 
     fetchData().catch(console.error);
-  }, []);
+  }, [trainNumber]);
 
   useEffect(() => {
     navigation.setOptions({ title: `${train.trainCategory} train ${train.trainNumber}`})
   }, [train]);
+
+  const onStationClick = (shortCode) => {
+    navigation.navigate("Station Details", {
+      shortCode: shortCode
+    });
+  };
 
   return(
     <SafeAreaView style={styles.container}>
       <View style={styles.summaryBox}>
         <View style={styles.summaryItem}>
           <Text style={styles.summaryItemTextSmall}>From</Text>
-          <Text style={styles.summaryItemTextBig}>{train.timeTableRows[0].stationShortCode}</Text>
+          <Text style={styles.summaryItemTextBig} onPress={() => onStationClick(train.timeTableRows[0].stationShortCode)}>{train.timeTableRows[0].stationShortCode}</Text>
         </View>
         <View style={styles.summaryItem}>
           <Ionicons name="arrow-forward" size={35} color="#ffffff"/>
         </View>
         <View style={styles.summaryItem}>
           <Text style={styles.summaryItemTextSmall}>To</Text>
-          <Text style={styles.summaryItemTextBig}>{train.timeTableRows[train.timeTableRows.length-1].stationShortCode}</Text>
+          <Text style={styles.summaryItemTextBig} onPress={() => onStationClick(train.timeTableRows[train.timeTableRows.length-1].stationShortCode)}>{train.timeTableRows[train.timeTableRows.length-1].stationShortCode}</Text>
         </View>
       </View>
       <ScrollView>
         { 
           schedule.map((item, index) => {
-            let date = new Date(item.scheduledTime);
+            const date = new Date(item.scheduledTime);
+            const passed = date < new Date();
 
             return(
-              <View key={index} style={styles.scheduleRow}>
-                <Text style={{width: '15%'}}>{item.stationShortCode}</Text>
+              <View key={index} style={[styles.scheduleRow, passed && styles.passed]}>
+                <Text style={{width: '15%'}} onPress={() => onStationClick(item.stationShortCode)}>{item.stationShortCode}</Text>
                 <Text style={{width: '25%'}}>{item.type}</Text>
                 <Text style={{width: '20%'}}>{item.commercialTrack}</Text>
                 <View style={styles.scheduleTimeCol}>
@@ -80,7 +87,7 @@ const TrainDetailsScreen = ({ route, navigation }) => {
                     <Ionicons name="time-outline" size={15} color="#000000"/>
                     <Text>{`${date.getHours()}:${(date.getMinutes() < 10 ? '0' : '') + date.getMinutes()}`}</Text>
                   </View>
-                  <View style={styles.scheduleDifference}>
+                  <View>
                     {(item.differenceInMinutes > 0) ? (
                       <Text style={styles.delay}>{`+${item.differenceInMinutes}`}</Text>
                     ) : (
@@ -133,6 +140,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#e2e2e2',
     padding: 20
+  },
+  passed: {
+    opacity: 0.5
   },
   scheduleTimeCol: {
     flexDirection: 'column',
