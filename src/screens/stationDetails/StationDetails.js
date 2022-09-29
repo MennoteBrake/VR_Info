@@ -85,9 +85,9 @@ const StationDetailsScreen = ({ route, navigation }) => {
       <ScrollView>
         {
           (departures.length) ? (
-            departures.map((departure) => {
+            departures.map((departure, index) => {
               return(
-                <View style={styles.departures}>
+                <View key={index} style={styles.departures}>
                   <Text onPress={() => onDestinationPress(departure.destination)}>{departure.destination}</Text>
                   <Text onPress={() => onDeparturePress(departure.trainNumber)}>{(departure.commuterLineID) ? departure.commuterLineID : `${departure.trainType}${departure.trainNumber}`}</Text>
                   <Text>{departure.track}</Text>
