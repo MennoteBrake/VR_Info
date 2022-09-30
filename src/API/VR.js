@@ -2,6 +2,8 @@ const API_BASE_URL = "https://rata.digitraffic.fi/api/v1/";
 const API_BASE_TRAINS = 'trains/';
 const API_BASE_TRAIN_LOCATIONS = 'train-locations/';
 const API_BASE_LATEST = 'latest';
+const API_BASE_STATION = 'live-trains/station/';
+
 /**
  * This function gets info about a specific train.
  *
@@ -32,15 +34,29 @@ export const getTrains = (date) => {
  * @param bbox Geographic demarcation with WSG84 coordinates. The first and two last numbers are used to form the points that define the bounding square. E.g. "1,1,70,70"
  * @returns JSON obj with all the locations of the active trains
  */
- export const getAllTrainLocations = (bbox = "") => {
-    let callStr = API_BASE_URL + API_BASE_TRAIN_LOCATIONS + API_BASE_LATEST;
+export const getAllTrainLocations = (bbox = "") => {
+  let callStr = API_BASE_URL + API_BASE_TRAIN_LOCATIONS + API_BASE_LATEST;
 
-    if(bbox != "")
-    {
-        callStr+= "?bbox=" + bbox;
-    }
-    return fetchJsonData(callStr);
-  };
+  if(bbox != "")
+  {
+    callStr+= "?bbox=" + bbox;
+  }
+  return fetchJsonData(callStr);
+};
+
+/**
+ * This function returns all the departures and arrivals at a given station
+ * @param station Abbreviation of the station
+ * @param arrivedTrains Amount of arrived trains
+ * @param arrivingTrains Amount of arriving trains
+ * @param departedTrains Amount of departed trains
+ * @param departingTrains Amount of departing trains
+ * @returns 
+ */
+export const getStation = (station, arrivedTrains, arrivingTrains, departedTrains, departingTrains) => {
+  let callStr = API_BASE_URL + API_BASE_STATION + `${station}?arrived_trains=${arrivedTrains}&arriving_trains=${arrivingTrains}&departed_trains=${departedTrains}&departing_trains=${departingTrains}`;
+  return fetchJsonData(callStr);
+}
 
 /**
  * 
