@@ -9,6 +9,8 @@ import { ScrollView } from 'react-native-gesture-handler';
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
+import Spinner from '../../components/Spinner';
+
 import { getTrainInfo } from '../../API/VR';
 
 const TrainDetailsScreen = ({ route, navigation }) => {
@@ -57,54 +59,60 @@ const TrainDetailsScreen = ({ route, navigation }) => {
   };
 
   return(
-    <SafeAreaView style={styles.container}>
-      <View style={styles.summaryBox}>
-        <View style={styles.summaryItem}>
-          <Text style={styles.summaryItemTextSmall}>From</Text>
-          <Text style={styles.summaryItemTextBig} onPress={() => onStationClick(train.timeTableRows[0].stationShortCode)}>{train.timeTableRows[0].stationShortCode}</Text>
-        </View>
-        <View style={styles.summaryItem}>
-          <Ionicons name="arrow-forward" size={35} color="#ffffff"/>
-        </View>
-        <View style={styles.summaryItem}>
-          <Text style={styles.summaryItemTextSmall}>To</Text>
-          <Text style={styles.summaryItemTextBig} onPress={() => onStationClick(train.timeTableRows[train.timeTableRows.length-1].stationShortCode)}>{train.timeTableRows[train.timeTableRows.length-1].stationShortCode}</Text>
-        </View>
-      </View>
-      <ScrollView>
-        { 
-          schedule.map((item, index) => {
-            const scheduledTime = new Date(item.scheduledTime);
-            const actualTime = new Date(scheduledTime.getTime() + item.differenceInMinutes * 60000);
-            const passedStation = actualTime < new Date();
-
-            return(
-              <View key={index} style={[styles.scheduleRow, passedStation && styles.passed]}>
-                <Text style={{width: '15%'}} onPress={() => onStationClick(item.stationShortCode)}>{item.stationShortCode}</Text>
-                <Text style={{width: '25%'}}>{item.type}</Text>
-                <Text style={{width: '20%'}}>{item.commercialTrack}</Text>
-                <View style={styles.scheduleTimeCol}>
-                  <View style={styles.scheduleTime}>
-                    <Ionicons name="time-outline" size={15} color="#000000"/>
-                    <Text>{`${scheduledTime.getHours()}:${(scheduledTime.getMinutes() < 10 ? '0' : '') + scheduledTime.getMinutes()}`}</Text>
+    <View style={styles.container}>
+      {(!train.trainNumber || !schedule.length) ? (
+        <Spinner />
+      ) : (
+        <SafeAreaView>
+          <View style={styles.summaryBox}>
+            <View style={styles.summaryItem}>
+              <Text style={styles.summaryItemTextSmall}>From</Text>
+              <Text style={styles.summaryItemTextBig} onPress={() => onStationClick(train.timeTableRows[0].stationShortCode)}>{train.timeTableRows[0].stationShortCode}</Text>
+            </View>
+            <View style={styles.summaryItem}>
+              <Ionicons name="arrow-forward" size={35} color="#ffffff"/>
+            </View>
+            <View style={styles.summaryItem}>
+              <Text style={styles.summaryItemTextSmall}>To</Text>
+              <Text style={styles.summaryItemTextBig} onPress={() => onStationClick(train.timeTableRows[train.timeTableRows.length-1].stationShortCode)}>{train.timeTableRows[train.timeTableRows.length-1].stationShortCode}</Text>
+            </View>
+          </View>
+          <ScrollView>
+            { 
+              schedule.map((item, index) => {
+                const scheduledTime = new Date(item.scheduledTime);
+                const actualTime = new Date(scheduledTime.getTime() + item.differenceInMinutes * 60000);
+                const passedStation = actualTime < new Date();
+    
+                return(
+                  <View key={index} style={[styles.scheduleRow, passedStation && styles.passed]}>
+                    <Text style={{width: '15%'}} onPress={() => onStationClick(item.stationShortCode)}>{item.stationShortCode}</Text>
+                    <Text style={{width: '25%'}}>{item.type}</Text>
+                    <Text style={{width: '20%'}}>{item.commercialTrack}</Text>
+                    <View style={styles.scheduleTimeCol}>
+                      <View style={styles.scheduleTime}>
+                        <Ionicons name="time-outline" size={15} color="#000000"/>
+                        <Text>{`${scheduledTime.getHours()}:${(scheduledTime.getMinutes() < 10 ? '0' : '') + scheduledTime.getMinutes()}`}</Text>
+                      </View>
+                      <View>
+                        {(item.differenceInMinutes > 0) ? (
+                          <Text style={styles.delay}>{`+${item.differenceInMinutes}`}</Text>
+                        ) : (
+                          <Text style={styles.onTime}>On time</Text>
+                        )}
+                      </View>
+                    </View>
                   </View>
-                  <View>
-                    {(item.differenceInMinutes > 0) ? (
-                      <Text style={styles.delay}>{`+${item.differenceInMinutes}`}</Text>
-                    ) : (
-                      <Text style={styles.onTime}>On time</Text>
-                    )}
-                  </View>
-                </View>
-              </View>
-            );
-          })
-        }
-        <View style={styles.footer}>
-          <Text>Service operated by {train.operatorShortCode}</Text>
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+                );
+              })
+            }
+            <View style={styles.footer}>
+              <Text>Service operated by {train.operatorShortCode}</Text>
+            </View>
+          </ScrollView>
+        </SafeAreaView>      
+      )}
+    </View>
   );
 };
 
