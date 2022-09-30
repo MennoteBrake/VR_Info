@@ -1,18 +1,17 @@
 import React from 'react';
 import { NavigationContainer} from '@react-navigation/native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-import HomeScreen from './screens/Home';
-import MapScreen from './screens/Map';
-import SettingsScreen from './screens/Settings';
+import RootScreen from './screens/root/Root';
+import TrainDetailsScreen from './screens/trainDetails/TrainDetails';
+import StationDetailsScreen from './screens/stationDetails/StationDetails';
 
 import {initDB} from "./db/VRIdb"
 import {addStation} from "./db/VRIStations"
-
 import {getStations} from "./API/VR"
 
-const Tab = createBottomTabNavigator();
+const Stack = createNativeStackNavigator();
 
 const App = () => {
   
@@ -21,29 +20,11 @@ const App = () => {
   
   return (
     <NavigationContainer>
-      <Tab.Navigator
-        screenOptions={({ route }) => ({
-          tabBarIcon: ({ focused, color, size }) => {
-            let iconName;
-
-            if(route.name === "Home") {
-              iconName = focused ? "ios-information-circle" : "ios-information-circle-outline";
-            } else if(route.name === "Map") {
-              iconName = focused ? "map" : "map-outline";
-            } else if(route.name === "Settings") {
-              iconName = focused ? "settings-sharp" : "settings-outline";
-            }
-
-            return <Ionicons name={iconName} size={size} color={color} />;
-          },
-          tabBarActiveTintColor: 'rgb(0,122,255)',
-          tabBarInactiveTintColor: 'rgb(142,142,147)',
-        })}
-      >
-        <Tab.Screen name="Home" component={HomeScreen} />
-        <Tab.Screen name="Map" component={MapScreen} />
-        <Tab.Screen name="Settings" component={SettingsScreen} />
-      </Tab.Navigator>
+      <Stack.Navigator initialRouteName="Root">
+        <Stack.Screen name="Root" component={RootScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="Train Details" component={TrainDetailsScreen} />
+        <Stack.Screen name="Station Details" component={StationDetailsScreen} />
+      </Stack.Navigator>
     </NavigationContainer>
   );
 };

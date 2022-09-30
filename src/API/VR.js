@@ -4,6 +4,7 @@ const API_BASE_TRAIN_LOCATIONS = 'train-locations/';
 const API_BASE_LATEST = 'latest';
 const API_BASE_METADATA = 'metadata/';
 const API_BASE_STATIONS = 'stations';
+const API_BASE_STATION = 'live-trains/station/';
 
 /**
  * This function gets info about a specific train.
@@ -42,6 +43,29 @@ export const getAllTrainLocations = (bbox = '') => {
   if (bbox != '') {
     callStr += '?bbox=' + bbox;
   }
+  return fetchJsonData(callStr);
+};
+
+/**
+ * This function returns all the departures and arrivals at a given station
+ * @param station Abbreviation of the station
+ * @param arrivedTrains Amount of arrived trains
+ * @param arrivingTrains Amount of arriving trains
+ * @param departedTrains Amount of departed trains
+ * @param departingTrains Amount of departing trains
+ * @returns
+ */
+export const getStation = (
+  station,
+  arrivedTrains,
+  arrivingTrains,
+  departedTrains,
+  departingTrains,
+) => {
+  let callStr =
+    API_BASE_URL +
+    API_BASE_STATION +
+    `${station}?arrived_trains=${arrivedTrains}&arriving_trains=${arrivingTrains}&departed_trains=${departedTrains}&departing_trains=${departingTrains}`;
   return fetchJsonData(callStr);
 };
 
