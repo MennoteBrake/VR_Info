@@ -1,30 +1,27 @@
 import React, {useState} from 'react';
-import {
-  TextInput,
-  StyleSheet,
-  ScrollView,
-  Text,
-  View,
-} from 'react-native';
+import {TextInput, StyleSheet, View} from 'react-native';
 
-export const SearchBar = (par) => {
+/**
+ * Custom SearchBar component
+ *
+ * @param {*} par This function has a few properties that it needs, these are explained below.
+ * @param list The list you want to search
+ * @param amountToDisplay The amount of results to show in the rendered results
+ * @param filterSearchResults a function that filters the list parameter, this function needs to have the following parameters: textToFilter, addToSearchList, list. Here the param textToFilter is the result of what is typed in the searchBar. addToSearchList is a function that can be used to add the results to the searchResult array. And the param list is the list that has to be filtered/searched
+ * @param DisplaySearchResults a custom component that is used to display the search results. This custom component needs to support the following parameters: searchResults amountToDisplay. Where the param searchResults is an arraylist of the search results, and amountToDisplay the amount of results to display
+ * @returns
+ */
+export const SearchBar = par => {
   const [searchResults, setSearchResults] = useState([]);
 
   function addToSearchList(item) {
     setSearchResults(searchResults => [...searchResults, item]);
   }
 
-  function filterList(textToFilter) {
+  function filterList(textToFilter, filterFunc, list) {
     if (textToFilter != '') {
-      let i = 0;
       setSearchResults([]); // clear the array
-      par.list
-        .filter(item =>
-            item.stationName
-            .toLowerCase()
-            .includes(textToFilter.toLowerCase()),
-        )
-        .map(item => addToSearchList(item));
+      filterFunc(textToFilter, addToSearchList, list);
     } else {
       setSearchResults([]);
     }
@@ -35,18 +32,16 @@ export const SearchBar = (par) => {
       <TextInput
         style={styles.search}
         placeholder="Search"
-        onChangeText={filterList}
+        onChangeText={filterText =>
+          filterList(filterText, par.filterSearchResults, par.list)
+        }
       />
-      {/* 
-        TODO: 
-        - this has to be replaced by a custom component that is given as a parameter 
-        - also limit the amount that will get mapped on screen to for example 10 or 20
-      */}
-      <ScrollView>
-        {searchResults.map((station, index) => (
-          <Text key={index}>{station.stationName}</Text>
-        ))}
-      </ScrollView>
+      {
+        <par.DisplaySearchResults
+          searchResults={searchResults}
+          amountToDisplay={par.amountToDisplay}
+        />
+      }
     </View>
   );
 };

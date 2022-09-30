@@ -87,13 +87,10 @@ export const fetchAllStations = () => {
           let items = [];
           for (let i = 0; i < result.rows.length; i++) {
             items.push(result.rows.item(i));
-            console.log(result.rows.item(i));
           }
-          //   console.log(items);
           resolve(items);
         },
         (tx, err) => {
-          console.log('Err');
           console.log(err);
           reject(err);
         },
