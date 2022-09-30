@@ -9,6 +9,8 @@ import {
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
+import Spinner from '../../components/Spinner';
+
 import { getStation } from '../../API/VR';
 
 const StationDetailsScreen = ({ route, navigation }) => {
@@ -18,7 +20,6 @@ const StationDetailsScreen = ({ route, navigation }) => {
 
   useEffect(() => {
     const fetchData = async () => {
-      console.log("hello");
       const stationData = await getStation(shortCode, 0, 0, 0, 15);
 
       if(stationData.length == 0) {
@@ -76,47 +77,52 @@ const StationDetailsScreen = ({ route, navigation }) => {
   };
 
   return(
-    <SafeAreaView>
-      <View style={styles.header}>
-        <Text style={styles.headerText}>
-          Departures
-        </Text>
-      </View>
-      <ScrollView>
-        {
-          (departures.length) ? (
-            departures.map((departure, index) => {
-              return(
-                <View key={index} style={styles.departures}>
-                  <Text onPress={() => onDestinationPress(departure.destination)}>{departure.destination}</Text>
-                  <Text onPress={() => onDeparturePress(departure.trainNumber)}>{(departure.commuterLineID) ? departure.commuterLineID : `${departure.trainType}${departure.trainNumber}`}</Text>
-                  <Text>{departure.track}</Text>
-                  <View style={styles.scheduleTimeCol}>
-                    <View style={styles.scheduleTime}>
-                      <Ionicons name="time-outline" size={15} color="#000000"/>
-                      <Text>{`${departure.departureDate.getHours()}:${(departure.departureDate.getMinutes() < 10 ? '0' : '') + departure.departureDate.getMinutes()}`}</Text>
-                    </View>
-                    <View style={styles.scheduleDifference}>
-                      {(departure.delayed) ? (
-                        <Text style={styles.delay}>{`+${departure.differenceInMinutes}`}</Text>
-                      ) : (
-                        <Text style={styles.onTime}>On time</Text>
-                      )}
+    <View style={styles.container}>
+      {(!departures.length) ? (
+        <Spinner />
+      ) : (
+        <SafeAreaView style={styles.container}>
+          <View style={styles.header}>
+            <Text style={styles.headerText}>
+              Departures
+            </Text>
+          </View>
+          <ScrollView>
+            {
+              departures.map((departure, index) => {
+                return(
+                  <View key={index} style={styles.departures}>
+                    <Text onPress={() => onDestinationPress(departure.destination)}>{departure.destination}</Text>
+                    <Text onPress={() => onDeparturePress(departure.trainNumber)}>{(departure.commuterLineID) ? departure.commuterLineID : `${departure.trainType}${departure.trainNumber}`}</Text>
+                    <Text>{departure.track}</Text>
+                    <View style={styles.scheduleTimeCol}>
+                      <View style={styles.scheduleTime}>
+                        <Ionicons name="time-outline" size={15} color="#000000"/>
+                        <Text>{`${departure.departureDate.getHours()}:${(departure.departureDate.getMinutes() < 10 ? '0' : '') + departure.departureDate.getMinutes()}`}</Text>
+                      </View>
+                      <View style={styles.scheduleDifference}>
+                        {(departure.delayed) ? (
+                          <Text style={styles.delay}>{`+${departure.differenceInMinutes}`}</Text>
+                        ) : (
+                          <Text style={styles.onTime}>On time</Text>
+                        )}
+                      </View>
                     </View>
                   </View>
-                </View>
-              )
-            })
-          ) : (
-            <Text>No departures</Text>
-          )
-        }
-      </ScrollView>
-    </SafeAreaView>
+                )
+              })
+            }
+          </ScrollView>
+        </SafeAreaView>
+      )}
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1
+  },
   header: {
     backgroundColor: '#00b451',
     height: 100,
