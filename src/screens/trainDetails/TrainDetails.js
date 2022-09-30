@@ -74,18 +74,19 @@ const TrainDetailsScreen = ({ route, navigation }) => {
       <ScrollView>
         { 
           schedule.map((item, index) => {
-            const date = new Date(item.scheduledTime);
-            const passed = date < new Date();
+            const scheduledTime = new Date(item.scheduledTime);
+            const actualTime = new Date(scheduledTime.getTime() + item.differenceInMinutes * 60000);
+            const passedStation = actualTime < new Date();
 
             return(
-              <View key={index} style={[styles.scheduleRow, passed && styles.passed]}>
+              <View key={index} style={[styles.scheduleRow, passedStation && styles.passed]}>
                 <Text style={{width: '15%'}} onPress={() => onStationClick(item.stationShortCode)}>{item.stationShortCode}</Text>
                 <Text style={{width: '25%'}}>{item.type}</Text>
                 <Text style={{width: '20%'}}>{item.commercialTrack}</Text>
                 <View style={styles.scheduleTimeCol}>
                   <View style={styles.scheduleTime}>
                     <Ionicons name="time-outline" size={15} color="#000000"/>
-                    <Text>{`${date.getHours()}:${(date.getMinutes() < 10 ? '0' : '') + date.getMinutes()}`}</Text>
+                    <Text>{`${scheduledTime.getHours()}:${(scheduledTime.getMinutes() < 10 ? '0' : '') + scheduledTime.getMinutes()}`}</Text>
                   </View>
                   <View>
                     {(item.differenceInMinutes > 0) ? (
