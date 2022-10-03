@@ -3,6 +3,7 @@ const API_BASE_TRAINS = 'trains/';
 const API_BASE_TRAIN_LOCATIONS = 'train-locations/';
 const API_BASE_LATEST = 'latest';
 const API_BASE_STATION = 'live-trains/station/';
+const API_BASE_TRACKNOTIFICATIONS = 'trafficrestriction-notifications.geojson';
 
 /**
  * This function gets info about a specific train.
@@ -57,6 +58,18 @@ export const getStation = (station, arrivedTrains, arrivingTrains, departedTrain
   let callStr = API_BASE_URL + API_BASE_STATION + `${station}?arrived_trains=${arrivedTrains}&arriving_trains=${arrivingTrains}&departed_trains=${departedTrains}&departing_trains=${departingTrains}`;
   return fetchJsonData(callStr);
 }
+
+/**
+ * This function returns all the trackwork notifications as GeoJSON
+ * @param state Notification status, values: SENT, ACTIVE, PASSIVE, FINISHED
+ * @param start The beginning of the interval
+ * @param end End of time slot
+ * @returns 
+ */
+export const getTrackNotifications = (state, start, end) => {
+  let callStr = API_BASE_URL + API_BASE_TRACKNOTIFICATIONS + `?start=${start}&end=${end}`;
+  return fetchJsonData(callStr);
+};
 
 /**
  * 
