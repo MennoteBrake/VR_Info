@@ -8,9 +8,12 @@ const TrackNotificationModal = ({ visibility, properties, onClose }) => {
     text = text.replaceAll("_", " ").toLowerCase();
     return text.charAt(0).toUpperCase() + text.slice(1);
   };
-  
+
   const startDate = new Date(properties.startDate);
   const endDate = new Date(properties.endDate);
+
+  const startDateTime = (startDate.getHours() < 10 ? '0' : '') + startDate.getHours() + ":" + (startDate.getMinutes() < 10 ? '0' : '') + startDate.getMinutes();
+  const endDateTime = (endDate.getHours() < 10 ? '0' : '') + endDate.getHours() + ":" + (endDate.getMinutes() < 10 ? '0' : '') + endDate.getMinutes();
 
   return(
     <GestureRecognizer onSwipeDown={() => onClose()} style={[styles.container, (visibility) && styles.visible]}>
@@ -24,7 +27,7 @@ const TrackNotificationModal = ({ visibility, properties, onClose }) => {
         </View>
         <View>
           <Text style={styles.subtitle}>When</Text>
-          <Text>{`From ${startDate.toLocaleDateString("en-FI", { weekday: 'long' })} ${(startDate.getHours() < 10 ? '0' : '') + startDate.getHours()}:${(startDate.getMinutes() < 10 ? '0' : '') + startDate.getMinutes()} to ${endDate.toLocaleDateString("en-FI", { weekday: 'long' })} ${(endDate.getHours() < 10 ? '0' : '') + endDate.getHours()}:${(endDate.getMinutes() < 10 ? '0' : '') + endDate.getMinutes()}`}</Text>
+          <Text>{`From ${startDate.toLocaleDateString("en-FI", { weekday: 'long' })} ${startDateTime} to ${endDate.toLocaleDateString("en-FI", { weekday: 'long' })} ${endDateTime}`}</Text>
         </View>
         <View>
           <Text style={styles.subtitle}>Carried out by</Text>
