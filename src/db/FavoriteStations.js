@@ -12,13 +12,11 @@ export const addFavoriteStation = stationShortCode => {
           resolve();
         },
         (_, err) => {
-          console.log('errrr');
           reject(err);
         },
       );
     });
   });
-  console.log('adding to favorite');
   return promise;
 };
 
@@ -37,7 +35,6 @@ export const deleteFavoriteStation = stationShortCode => {
       );
     });
   });
-  console.log('deleting favorite');
   return promise;
 };
 

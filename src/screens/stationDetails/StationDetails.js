@@ -19,25 +19,13 @@ import {
   addFavoriteStation,
   fetchAllFavoriteStations,
 } from '../../db/FavoriteStations';
-import {fetchStationName} from '../../db/VRIStations';
 
 const StationDetailsScreen = ({route, navigation}) => {
   const {shortCode} = route.params;
 
   const [departures, setDepartures] = useState([]);
 
-  async function getStationName() {
-    try {
-      const data = await fetchStationName(shortCode);
-      console.log(data);
-    } catch (err) {
-      console.log(err);
-    }
-  }
-
   const [isFavorite, setIsFavorite] = useState(false);
-
-  const [stationName, setStationName] = useState('dd');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -127,15 +115,16 @@ const StationDetailsScreen = ({route, navigation}) => {
       ) : (
         <SafeAreaView style={styles.container}>
           <View style={styles.header}>
-            <Text style={styles.headerText}>Departures {stationName}</Text>
+            <Text style={styles.headerText}>Departures</Text>
             <TouchableOpacity
-              style={{backgroundColor: 'red'}}
+              style={styles.favoriteIcon}
               onPress={() => {
                 onFavoritePress();
               }}>
               <Ionicons
                 name={isFavorite ? 'star' : 'star-outline'}
-                size={32}></Ionicons>
+                size={32}
+                color={'white'}></Ionicons>
             </TouchableOpacity>
           </View>
           <ScrollView>
@@ -188,7 +177,7 @@ const styles = StyleSheet.create({
   header: {
     backgroundColor: '#00b451',
     height: 100,
-    justifyContent: 'space-evenly',
+    justifyContent: 'center',
     flexDirection: 'row',
     alignItems: 'center',
   },
@@ -217,6 +206,9 @@ const styles = StyleSheet.create({
   },
   onTime: {
     color: '#00b451',
+  },
+  favoriteIcon: {
+    paddingLeft: '5%',
   },
 });
 
