@@ -99,3 +99,26 @@ export const fetchAllStations = () => {
   });
   return promise;
 };
+
+export const fetchStationName = stationShortCode => {
+  const promise = new Promise((resolve, reject) => {
+    db.transaction(tx => {
+      tx.executeSql(
+        'select * from ' + tableName + ' where stationShortCode=?',
+        [stationShortCode],
+        (tx, result) => {
+          let items = [];
+          for (let i = 0; i < result.rows.length; i++) {
+            items.push(result.rows.item(i));
+          }
+          resolve(items);
+        },
+        (tx, err) => {
+          console.log(err);
+          reject(err);
+        },
+      );
+    });
+  });
+  return promise;
+};

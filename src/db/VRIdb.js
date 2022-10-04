@@ -4,13 +4,14 @@ export var db = openDatabase({name: 'VRI.db'});
 
 const createStationsVR =
   'create table if not exists stationsVR (id INTEGER not null primary key, passengerTraffic NUMERIC not null, type TEXT not null, stationName TEXT not null, stationShortCode TEXT not null, stationUICCode INTEGER not null, countryCode TEXT not null, longitude REAL not null, latitude REAL not null);';
+const createFavoriteStationsVR =
+  'create table if not exists favoriteStationsVR (id INTEGER not null primary key, stationShortCode TEXT not null) ;';
 
-export const initDB = () => {
+const init = sqlStatement => {
   const promise = new Promise((resolve, reject) => {
     db.transaction(tx => {
-      tx.executeSql('DROP TABLE IF EXISTS stationsVR', []);
       tx.executeSql(
-        createStationsVR,
+        sqlStatement,
         [],
         () => {
           resolve();
@@ -22,4 +23,20 @@ export const initDB = () => {
     });
   });
   return promise;
+};
+
+const dropTable = tableName => {
+  const promise = new Promise((resolve, reject) => {
+    db.transaction(tx => {
+      tx.executeSql('DROP TABLE IF EXISTS ' + tableName, []);
+    });
+  });
+  return promise;
+};
+
+export const initDB = () => {
+  dropTable('stationsVR');
+  // dropTable('favoriteStationsVR');
+  init(createStationsVR);
+  init(createFavoriteStationsVR);
 };

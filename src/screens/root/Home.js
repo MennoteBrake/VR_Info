@@ -1,10 +1,22 @@
 import React, {useState} from 'react';
-import {SafeAreaView, Text, ScrollView} from 'react-native';
-import {SearchBar} from '../components/SearchBar';
+import {
+  SafeAreaView,
+  Text,
+  ScrollView,
+  StyleSheet,
+  View,
+  TouchableOpacity,
+} from 'react-native';
+import {SearchBar} from '../../components/SearchBar';
 
-import {fetchAllStations} from '../db/VRIStations';
+import {fetchAllStations} from '../../db/VRIStations';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import {fetchAllFavoriteStations} from '../../db/FavoriteStations';
 
-const HomeScreen = () => {
+let stackNavigation;
+
+const HomeScreen = ({navigation}) => {
+  stackNavigation = navigation;
   const [stationList, setStationList] = useState([]);
   const amountOfItemsToDisplay = 20;
 
@@ -45,14 +57,41 @@ const filterStations = (textToFilter, addToSearchList, list) => {
  *
  * @param searchResults An arraylist with the results of the search that needs to be displayed.
  * @param amountToDisplay The amount of results to display on screen.
+ * @param setSearchResults The set function for the searchResults arrayList
  */
 const DisplaySearchResults = par => {
+  async function getFavorites() {
+    try {
+      const data = await fetchAllFavoriteStations();
+      par.setSearchResults(data);
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  if (par.isInputEmpty) {
+    getFavorites();
+  }
+
   return (
-    <ScrollView>
+    <ScrollView style={styles.results}>
       {par.searchResults
         .filter((item, index) => index < par.amountToDisplay)
         .map((station, index) => (
-          <Text key={index}>{station.stationName}</Text>
+          <TouchableOpacity
+            key={index}
+            onPress={() =>
+              stackNavigation.navigate('Station Details', {
+                shortCode: station.stationShortCode,
+              })
+            }>
+            <View style={styles.searchResults}>
+              <Ionicons name="train-sharp" size={32}></Ionicons>
+              <Text style={styles.searchResultsText}>
+                {station.stationName}
+              </Text>
+            </View>
+          </TouchableOpacity>
         ))}
     </ScrollView>
   );
@@ -67,5 +106,23 @@ async function getAllStations(setStationList) {
     console.log(err);
   }
 }
+
+const styles = StyleSheet.create({
+  results: {
+    width: '95%',
+  },
+  searchResults: {
+    flexDirection: 'row',
+    width: '95%',
+    height: 50,
+    paddingTop: 7,
+    borderBottomColor: 'gray',
+    borderBottomWidth: StyleSheet.hairlineWidth,
+  },
+  searchResultsText: {
+    paddingTop: 7,
+    paddingLeft: 15,
+  },
+});
 
 export default HomeScreen;

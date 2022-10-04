@@ -13,6 +13,7 @@ import {TextInput, StyleSheet, View} from 'react-native';
  */
 export const SearchBar = par => {
   const [searchResults, setSearchResults] = useState([]);
+  const [isInputFieldEmpty, setInputFieldEmpty] = useState(true);
 
   function addToSearchList(item) {
     setSearchResults(searchResults => [...searchResults, item]);
@@ -22,8 +23,10 @@ export const SearchBar = par => {
     if (textToFilter != '') {
       setSearchResults([]); // clear the array
       filterFunc(textToFilter, addToSearchList, list);
+      setInputFieldEmpty(false);
     } else {
       setSearchResults([]);
+      setInputFieldEmpty(true);
     }
   }
 
@@ -40,6 +43,8 @@ export const SearchBar = par => {
         <par.DisplaySearchResults
           searchResults={searchResults}
           amountToDisplay={par.amountToDisplay}
+          setSearchResults={setSearchResults}
+          isInputEmpty={isInputFieldEmpty}
         />
       }
     </View>
