@@ -6,14 +6,15 @@ import {
   StyleSheet,
 } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
-
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { useTheme } from '@react-navigation/native';
 
 import Spinner from '../../components/Spinner';
 
 import { getTrainInfo } from '../../API/VR';
 
 const TrainDetailsScreen = ({ route, navigation }) => {
+  const { colors } = useTheme();
   const { trainNumber } = route.params;
 
   const [train, setTrain] = useState({
@@ -85,14 +86,14 @@ const TrainDetailsScreen = ({ route, navigation }) => {
                 const passedStation = actualTime < new Date();
     
                 return(
-                  <View key={index} style={[styles.scheduleRow, passedStation && styles.passed]}>
-                    <Text style={{width: '15%'}} onPress={() => onStationClick(item.stationShortCode)}>{item.stationShortCode}</Text>
-                    <Text style={{width: '25%'}}>{item.type}</Text>
-                    <Text style={{width: '20%'}}>{item.commercialTrack}</Text>
+                  <View key={index} style={[styles.scheduleRow, (passedStation && styles.passed), { backgroundColor: colors.card, borderColor: colors.border }]}>
+                    <Text style={{width: '15%', color: colors.text}} onPress={() => onStationClick(item.stationShortCode)}>{item.stationShortCode}</Text>
+                    <Text style={{width: '25%', color: colors.text}}>{item.type}</Text>
+                    <Text style={{width: '20%', color: colors.text}}>{item.commercialTrack}</Text>
                     <View style={styles.scheduleTimeCol}>
                       <View style={styles.scheduleTime}>
-                        <Ionicons name="time-outline" size={15} color="#000000"/>
-                        <Text>{`${scheduledTime.getHours()}:${(scheduledTime.getMinutes() < 10 ? '0' : '') + scheduledTime.getMinutes()}`}</Text>
+                        <Ionicons name="time-outline" size={15} color={colors.text}/>
+                        <Text style={{color: colors.text}}>{`${scheduledTime.getHours()}:${(scheduledTime.getMinutes() < 10 ? '0' : '') + scheduledTime.getMinutes()}`}</Text>
                       </View>
                       <View>
                         {(item.differenceInMinutes > 0) ? (
@@ -107,7 +108,7 @@ const TrainDetailsScreen = ({ route, navigation }) => {
               })
             }
             <View style={styles.footer}>
-              <Text>Service operated by {train.operatorShortCode}</Text>
+              <Text style={{color: colors.text}}>Service operated by {train.operatorShortCode}</Text>
             </View>
           </ScrollView>
         </SafeAreaView>      
@@ -148,9 +149,7 @@ const styles = StyleSheet.create({
   scheduleRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    backgroundColor: '#ffffff',
     borderWidth: 1,
-    borderColor: '#e2e2e2',
     padding: 20
   },
   passed: {

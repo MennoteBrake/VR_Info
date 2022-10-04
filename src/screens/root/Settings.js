@@ -1,40 +1,50 @@
-import { useState } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import { SafeAreaView, View, Text, Switch, StyleSheet} from 'react-native';
 import { getReadableVersion } from 'react-native-device-info';
 
+import { ThemeContext } from '../../contexts/Context';
+import { useTheme } from '@react-navigation/native';
+
 const SettingsScreen = () => {
-  const [switchDarkmode, toggleSwitchDarkmode] = useState(false);
+  const { colors } = useTheme();
+  const { theme, setTheme } = useContext(ThemeContext);
+
+  const [switchDarkmode, toggleSwitchDarkmode] = useState((theme === "dark"));
   const [switchPassenger, toggleSwitchOnlyPassenger] = useState(false);
   const [switchNonStopping, toggleSwitchNonStopping] = useState(false);
+
+  useEffect(() => {
+    setTheme(switchDarkmode ? "dark" : "light");
+  }, [switchDarkmode]);
 
   return(
     <SafeAreaView>
       <View style={styles.groupWrapper}>
-        <Text style={styles.groupHeader}>Dark Appearance</Text>
-        <View style={styles.group}>
+        <Text style={[styles.groupHeader, { color: colors.text }]}>Dark Appearance</Text>
+        <View style={[styles.group, { backgroundColor: colors.card }]}>
           <View style={styles.itemRow}>
-            <Text style={styles.itemText}>Dark Appearance</Text>
+            <Text style={[styles.itemText, { color: colors.text}]}>Dark Appearance</Text>
             <Switch onValueChange={() => toggleSwitchDarkmode(previousState => !previousState)} value={switchDarkmode} />
           </View>
         </View>
       </View>
 
       <View style={styles.groupWrapper}>
-        <Text style={styles.groupHeader}>Trains</Text>
-        <View style={styles.group}>
+        <Text style={[styles.groupHeader, { color: colors.text }]}>Trains</Text>
+        <View style={[styles.group, {backgroundColor: colors.card}]}>
           <View style={styles.itemRow}>
-            <Text style={styles.itemText}>Only passenger trains</Text>
+            <Text style={[styles.itemText, { color: colors.text}]}>Only passenger trains</Text>
             <Switch onValueChange={() => toggleSwitchOnlyPassenger(previousState => !previousState)} value={switchPassenger} />
           </View>
-          <View style={styles.hr} />
+          <View style={[styles.hr, { borderBottomColor: colors.border }]} />
           <View style={styles.itemRow}>
-            <Text style={styles.itemText}>Show non-stopping trains</Text>
+            <Text style={[styles.itemText, { color: colors.text}]}>Show non-stopping trains</Text>
             <Switch onValueChange={() => toggleSwitchNonStopping(previousState => !previousState)} value={switchNonStopping} />
           </View>
         </View>
       </View>
       <View style={styles.version}>
-        <Text>Version {getReadableVersion()}</Text>
+        <Text style={{color: colors.text}}>Version {getReadableVersion()}</Text>
       </View>
     </SafeAreaView>
   );
@@ -53,12 +63,10 @@ const styles = StyleSheet.create({
     marginLeft: 10
   },
   group: {
-    backgroundColor: '#ffffff',
     borderRadius: 10,
     padding: 10,
   },
   hr: {
-    borderBottomColor: '#8e8e93',
     borderBottomWidth: StyleSheet.hairlineWidth,
     marginTop: 7,
     marginBottom: 7
