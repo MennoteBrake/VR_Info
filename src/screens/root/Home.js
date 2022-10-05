@@ -13,12 +13,23 @@ import {fetchAllStations} from '../../db/VRIStations';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {fetchAllFavoriteStations} from '../../db/FavoriteStations';
 
-let stackNavigation;
-
 const HomeScreen = ({navigation}) => {
-  stackNavigation = navigation;
+  const [searchResults, setSearchResults] = useState([]);
+  const [isInputFieldEmpty, setInputFieldEmpty] = useState(true);
   const [stationList, setStationList] = useState([]);
   const amountOfItemsToDisplay = 20;
+
+  function addToSearchList(item) {
+    setSearchResults(searchResults => [...searchResults, item]);
+  }
+
+  const filterStations = (textToFilter, list) => {
+    list
+      .filter(item =>
+        item.stationName.toLowerCase().includes(textToFilter.toLowerCase()),
+      )
+      .map(item => addToSearchList(item));
+  };
 
   if (stationList.length === 0) {
     getAllStations(setStationList);
@@ -28,27 +39,21 @@ const HomeScreen = ({navigation}) => {
     <SafeAreaView style={styles.homeView}>
       <SearchBar
         list={stationList}
-        amountToDisplay={amountOfItemsToDisplay}
         filterSearchResults={filterStations}
-        DisplaySearchResults={DisplaySearchResults}
+        searchResults={searchResults}
+        setSearchResults={setSearchResults}
+        setInputFieldEmpty={setInputFieldEmpty}
+      />
+
+      <DisplaySearchResults
+        searchResults={searchResults}
+        amountToDisplay={amountOfItemsToDisplay}
+        setSearchResults={setSearchResults}
+        isInputEmpty={isInputFieldEmpty}
+        stackNavigation={navigation}
       />
     </SafeAreaView>
   );
-};
-
-/**
- * This function is used by the searchbar to filter the arraylist to get the search results.
- *
- * @param {*} textToFilter The text that is used to filter.
- * @param {*} addToSearchList A function to add to the array list of the search results.
- * @param {*} list The list it needs to filter.
- */
-const filterStations = (textToFilter, addToSearchList, list) => {
-  list
-    .filter(item =>
-      item.stationName.toLowerCase().includes(textToFilter.toLowerCase()),
-    )
-    .map(item => addToSearchList(item));
 };
 
 /**
@@ -57,6 +62,7 @@ const filterStations = (textToFilter, addToSearchList, list) => {
  * @param searchResults An arraylist with the results of the search that needs to be displayed.
  * @param amountToDisplay The amount of results to display on screen.
  * @param setSearchResults The set function for the searchResults arrayList
+ * @param stackNavigation The parameter used to navigate to a page on the stackNavigation
  */
 const DisplaySearchResults = par => {
   async function getFavorites() {
@@ -67,6 +73,12 @@ const DisplaySearchResults = par => {
       console.log(err);
     }
   }
+
+  const addFavoriteIcon = () => {
+    if (par.isInputEmpty) {
+      return <Ionicons name="bookmark" size={32}></Ionicons>;
+    }
+  };
 
   if (par.isInputEmpty) {
     getFavorites();
@@ -80,15 +92,18 @@ const DisplaySearchResults = par => {
           <TouchableOpacity
             key={index}
             onPress={() =>
-              stackNavigation.navigate('Station Details', {
+              par.stackNavigation.navigate('Station Details', {
                 shortCode: station.stationShortCode,
               })
             }>
             <View style={styles.searchResults}>
-              <Ionicons name="train-sharp" size={32}></Ionicons>
-              <Text style={styles.searchResultsText}>
-                {station.stationName}
-              </Text>
+              <View style={styles.basicSearchResults}>
+                <Ionicons name="train-sharp" size={32}></Ionicons>
+                <Text style={styles.searchResultsText}>
+                  {station.stationName}
+                </Text>
+              </View>
+              <View>{addFavoriteIcon()}</View>
             </View>
           </TouchableOpacity>
         ))}
@@ -122,6 +137,12 @@ const styles = StyleSheet.create({
     paddingTop: 7,
     borderBottomColor: 'gray',
     borderBottomWidth: StyleSheet.hairlineWidth,
+  },
+  basicSearchResults: {
+    flexDirection: 'row',
+    width: '95%',
+    height: 50,
+    paddingTop: 7,
   },
   searchResultsText: {
     paddingTop: 7,

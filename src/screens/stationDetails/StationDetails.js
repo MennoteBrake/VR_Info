@@ -70,11 +70,8 @@ const StationDetailsScreen = ({route, navigation}) => {
 
     const checkIfFavorite = async () => {
       let data = await checkIfFavoriteExists(shortCode).catch(console.error);
-      setIsFavorite(
-        data[
-          'EXISTS(SELECT * FROM favoriteStationsVR WHERE stationShortCode=?)'
-        ],
-      );
+      console.log(data);
+      setIsFavorite(data);
     };
 
     checkIfFavorite();

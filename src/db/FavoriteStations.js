@@ -42,12 +42,12 @@ export const checkIfFavoriteExists = stationShortCode => {
   const promise = new Promise((resolve, reject) => {
     db.transaction(tx => {
       tx.executeSql(
-        'select exists(select * from ' +
+        'select * from ' +
           tableName +
-          ' where stationShortCode=?);',
+          ' where stationShortCode=?;',
         [stationShortCode],
         (tx, result) => {
-          resolve(result.rows.item(0));
+          resolve(result.rows.length > 0);
         },
         (tx, err) => {
           console.log(err);
