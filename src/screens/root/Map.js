@@ -1,37 +1,59 @@
 import { useEffect, useState } from 'react';
 import { SafeAreaView, StyleSheet } from 'react-native';
-import MapView, { Marker } from 'react-native-maps';
+import MapView, { Marker, Geojson } from 'react-native-maps';
 
-import { getAllTrainLocations } from '../../API/VR';
+import { getAllTrainLocations, getTrackNotifications } from '../../API/VR';
+import TrackNotificationModal from '../../components/TrackNotificationModal';
 
 const MapScreen = ({ navigation }) => {
   const [trains, setTrains] = useState([]);
+  const [trackNotifications, setTrackNotifications] = useState({});
+  const [notificationDetails, setNotificationDetails] = useState({});
+  const [notificationModalVisible, setNotificationModalVisible] = useState(false);
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchTrainData = async () => {
       const data = await getAllTrainLocations();
       setTrains(data);
     }
 
-    fetchData().catch(console.error);
+    const fetchTrackNotifications = async () => {
+      const currentDate = new Date(new Date().setHours(3,0,0,0));
+      const newDate = new Date(currentDate);
+      const futureDate = new Date(newDate.setDate(newDate.getDate() + 30));
+
+      let data = await getTrackNotifications("SENT", currentDate.toISOString(), futureDate.toISOString()).catch(console.error);
+      data.features = data.features.filter(feat => {
+        return feat.geometry.type == "MultiLineString" || (feat.geometry.type == "Point" && feat.properties.hasOwnProperty("organization"))
+      });
+      setTrackNotifications(data);
+    };
+
+    fetchTrainData().catch(console.error);
+    fetchTrackNotifications().catch(console.error);
 
     const interval = setInterval(() => {
-      fetchData().catch(console.error);
+      fetchTrainData().catch(console.error);
     }, 20000);
 
     return () => clearInterval(interval);
   }, []);
 
-  const onMarkerPress = (trainNumber, departureDate) => {
+  const onMarkerPress = (trainNumber) => {
     navigation.navigate("Train Details", {
       trainNumber: trainNumber
     });
   };
 
+  const onGeoMarkerPress = (data) => {
+    setNotificationDetails(data.feature.properties);
+    setNotificationModalVisible(true);
+  };
+
   return(
     <SafeAreaView style={styles.container}>
       <MapView
-        style={styles.map}
+        style={(notificationModalVisible) ? styles.mapHalf : styles.mapFull}
         initialRegion={{
           latitude: 65.5,
           longitude: 26,
@@ -58,7 +80,20 @@ const MapScreen = ({ navigation }) => {
             })
           )
         }
+
+        {(Object.keys(trackNotifications).length) ? (
+          <Geojson
+            geojson={trackNotifications}
+            strokeColor="red"
+            fillColor="red"
+            strokeWidth={5}
+            onPress={(data) => onGeoMarkerPress(data)}
+          />
+        ) : null}
       </MapView>
+
+      <TrackNotificationModal visibility={notificationModalVisible} properties={notificationDetails} onClose={() => setNotificationModalVisible(false)}/>
+      
     </SafeAreaView>
   );
 };
@@ -67,9 +102,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  map: {
+  mapFull: {
     ...StyleSheet.absoluteFillObject,
   },
+  mapHalf: {
+    flex: 0.8
+  }
  });
 
 export default MapScreen;

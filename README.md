@@ -7,6 +7,7 @@ It also provides useful information such as planned maintenance works and upcomi
 
 ## Setup
 
+### iOS
 ```
 git clone git@github.com:MennoteBrake/VR_Info.git
 npm install

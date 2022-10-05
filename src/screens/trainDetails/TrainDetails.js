@@ -63,7 +63,7 @@ const TrainDetailsScreen = ({ route, navigation }) => {
       {(!train.trainNumber || !schedule.length) ? (
         <Spinner />
       ) : (
-        <SafeAreaView>
+        <SafeAreaView style={styles.contentContainer}>
           <View style={styles.summaryBox}>
             <View style={styles.summaryItem}>
               <Text style={styles.summaryItemTextSmall}>From</Text>
@@ -120,6 +120,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column'
+  },
+  contentContainer: {
+    flex: 1
   },
   summaryBox: {
     backgroundColor: '#00b451',
