@@ -25,8 +25,7 @@ const HomeScreen = ({navigation}) => {
   }
 
   return (
-    <SafeAreaView
-      style={{flex: 1, justifyContent: 'flex-start', alignItems: 'center'}}>
+    <SafeAreaView style={styles.homeView}>
       <SearchBar
         list={stationList}
         amountToDisplay={amountOfItemsToDisplay}
@@ -98,16 +97,21 @@ const DisplaySearchResults = par => {
 };
 
 // this takes a bit to long to do it this way, maybe do it on initialization of the app?
-async function getAllStations(setStationList) {
+const getAllStations = async setStationList => {
   try {
     const data = await fetchAllStations();
     setStationList(data);
   } catch (err) {
     console.log(err);
   }
-}
+};
 
 const styles = StyleSheet.create({
+  homeView: {
+    flex: 1,
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+  },
   results: {
     width: '95%',
   },

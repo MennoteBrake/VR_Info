@@ -42,9 +42,9 @@ export const checkIfFavoriteExists = stationShortCode => {
   const promise = new Promise((resolve, reject) => {
     db.transaction(tx => {
       tx.executeSql(
-        'SELECT EXISTS(SELECT * FROM ' +
+        'select exists(select * from ' +
           tableName +
-          ' WHERE stationShortCode=?);',
+          ' where stationShortCode=?);',
         [stationShortCode],
         (tx, result) => {
           resolve(result.rows.item(0));
@@ -72,11 +72,7 @@ export const fetchAllFavoriteStations = () => {
           '.stationShortCode=stationsVR.stationShortCode',
         [],
         (tx, result) => {
-          let items = [];
-          for (let i = 0; i < result.rows.length; i++) {
-            items.push(result.rows.item(i));
-          }
-          resolve(items);
+          resolve(result.rows.raw());
         },
         (tx, err) => {
           console.log(err);

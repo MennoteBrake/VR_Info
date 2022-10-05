@@ -84,11 +84,7 @@ export const fetchAllStations = () => {
         'select * from ' + tableName,
         [],
         (tx, result) => {
-          let items = [];
-          for (let i = 0; i < result.rows.length; i++) {
-            items.push(result.rows.item(i));
-          }
-          resolve(items);
+          resolve(result.rows.raw()); 
         },
         (tx, err) => {
           console.log(err);
@@ -107,11 +103,7 @@ export const fetchStationName = stationShortCode => {
         'select * from ' + tableName + ' where stationShortCode=?',
         [stationShortCode],
         (tx, result) => {
-          let items = [];
-          for (let i = 0; i < result.rows.length; i++) {
-            items.push(result.rows.item(i));
-          }
-          resolve(items);
+          resolve(result.rows.raw()); 
         },
         (tx, err) => {
           console.log(err);

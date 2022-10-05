@@ -17,7 +17,6 @@ import {
   deleteFavoriteStation,
   checkIfFavoriteExists,
   addFavoriteStation,
-  fetchAllFavoriteStations,
 } from '../../db/FavoriteStations';
 
 const StationDetailsScreen = ({route, navigation}) => {
@@ -118,9 +117,7 @@ const StationDetailsScreen = ({route, navigation}) => {
             <Text style={styles.headerText}>Departures</Text>
             <TouchableOpacity
               style={styles.favoriteIcon}
-              onPress={() => {
-                onFavoritePress();
-              }}>
+              onPress={onFavoritePress}>
               <Ionicons
                 name={isFavorite ? 'star' : 'star-outline'}
                 size={32}

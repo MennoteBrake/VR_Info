@@ -12,8 +12,15 @@ import {getStations} from './API/VR';
 
 const Stack = createNativeStackNavigator();
 
+initDB()
+  .then(() => {
+    console.log('Database creation succeeded!');
+  })
+  .catch(err => {
+    console.log('Database IS NOT initialized! ' + err);
+  });
+
 const App = () => {
-  initDB();
   insertStationsToDB().catch(console.error);
 
   return (
@@ -33,9 +40,6 @@ const App = () => {
 
 const insertStationsToDB = async () => {
   let data = await getStations();
-  if (data.length == 0) {
-    data = [];
-  }
   {
     data.map((item, index) =>
       addStation(
