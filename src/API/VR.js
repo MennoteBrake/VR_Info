@@ -5,6 +5,7 @@ const API_BASE_LATEST = 'latest';
 const API_BASE_METADATA = 'metadata/';
 const API_BASE_STATIONS = 'stations';
 const API_BASE_STATION = 'live-trains/station/';
+const API_BASE_TRACKNOTIFICATIONS = 'trafficrestriction-notifications.geojson';
 
 /**
  * This function gets info about a specific train.
@@ -81,6 +82,19 @@ export const getStations = () => {
 
 /**
  *
+ * This function returns all the trackwork notifications as GeoJSON
+ * @param state Notification status, values: SENT, ACTIVE, PASSIVE, FINISHED
+ * @param start The beginning of the interval
+ * @param end End of time slot
+ * @returns 
+ */
+export const getTrackNotifications = (state, start, end) => {
+  let callStr = API_BASE_URL + API_BASE_TRACKNOTIFICATIONS + `?start=${start}&end=${end}`;
+  return fetchJsonData(callStr);
+};
+
+/**
+ * 
  * @param call a string with the API call you want to make.
  * @returns the fetched data in JSON
  */
