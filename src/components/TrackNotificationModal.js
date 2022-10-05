@@ -1,7 +1,10 @@
 import { Text, View, StyleSheet } from "react-native";
+import { useTheme } from '@react-navigation/native';
 import GestureRecognizer from 'react-native-swipe-gestures';
 
 const TrackNotificationModal = ({ visibility, properties, onClose }) => {
+  const { colors } = useTheme();
+
   const capitalizeString = (text) => {
     if(!text) return;
 
@@ -16,7 +19,7 @@ const TrackNotificationModal = ({ visibility, properties, onClose }) => {
   const endDateTime = (endDate.getHours() < 10 ? '0' : '') + endDate.getHours() + ":" + (endDate.getMinutes() < 10 ? '0' : '') + endDate.getMinutes();
 
   return(
-    <GestureRecognizer onSwipeDown={() => onClose()} style={[styles.container, (visibility) && styles.visible]}>
+    <GestureRecognizer onSwipeDown={() => onClose()} style={[styles.container, (visibility) && styles.visible, { backgroundColor: colors.card }]}>
       <View style={styles.gestureBarContainer}>
         <View style={styles.gestureBar}></View>
       </View>
@@ -27,11 +30,11 @@ const TrackNotificationModal = ({ visibility, properties, onClose }) => {
         </View>
         <View>
           <Text style={styles.subtitle}>When</Text>
-          <Text>{`From ${startDate.toLocaleDateString("en-FI", { weekday: 'long' })} ${startDateTime} to ${endDate.toLocaleDateString("en-FI", { weekday: 'long' })} ${endDateTime}`}</Text>
+          <Text style={{ color: colors.text }}>{`From ${startDate.toLocaleDateString("en-FI", { weekday: 'long' })} ${startDateTime} to ${endDate.toLocaleDateString("en-FI", { weekday: 'long' })} ${endDateTime}`}</Text>
         </View>
         <View>
           <Text style={styles.subtitle}>Carried out by</Text>
-          <Text>{properties.organization}</Text>
+          <Text style={{ color: colors.text }}>{properties.organization}</Text>
         </View>
       </View>
     </GestureRecognizer>
@@ -53,7 +56,6 @@ const styles = StyleSheet.create({
     flex: 0.5,
     marginTop: 'auto',
     display: 'none',
-    backgroundColor: '#ffffff',
     paddingBottom: 20
   },
   visible: {
