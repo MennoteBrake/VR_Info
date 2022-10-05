@@ -1,6 +1,13 @@
 import { Text, View, StyleSheet } from "react-native";
 import GestureRecognizer from 'react-native-swipe-gestures';
 
+/**
+ * Displays a view with detailed information of the track notification
+ * @param {*} visibility Whether or not the modal is visible
+ * @param {*} properties Properties of the notification 
+ * @param {*} onClose Method that gets called when the user swipes down to close it
+ * @returns 
+ */
 const TrackNotificationModal = ({ visibility, properties, onClose }) => {
   const capitalizeString = (text) => {
     if(!text) return;
@@ -12,8 +19,16 @@ const TrackNotificationModal = ({ visibility, properties, onClose }) => {
   const startDate = new Date(properties.startDate);
   const endDate = new Date(properties.endDate);
 
+  // convert to correct time notation, e.g. 12:1 should be 12:01
   const startDateTime = (startDate.getHours() < 10 ? '0' : '') + startDate.getHours() + ":" + (startDate.getMinutes() < 10 ? '0' : '') + startDate.getMinutes();
   const endDateTime = (endDate.getHours() < 10 ? '0' : '') + endDate.getHours() + ":" + (endDate.getMinutes() < 10 ? '0' : '') + endDate.getMinutes();
+
+  let renderStartDate = `From ${startDate.toLocaleDateString("en-FI", { weekday: 'long' })} ${startDateTime}`;
+  let renderEndDate = "";
+  if(properties.endDate)
+  {
+    renderEndDate = ` to ${endDate.toLocaleDateString("en-FI", { weekday: 'long' })} ${endDateTime}`;
+  }
 
   return(
     <GestureRecognizer onSwipeDown={() => onClose()} style={[styles.container, (visibility) && styles.visible]}>
@@ -27,7 +42,7 @@ const TrackNotificationModal = ({ visibility, properties, onClose }) => {
         </View>
         <View>
           <Text style={styles.subtitle}>When</Text>
-          <Text>{`From ${startDate.toLocaleDateString("en-FI", { weekday: 'long' })} ${startDateTime} to ${endDate.toLocaleDateString("en-FI", { weekday: 'long' })} ${endDateTime}`}</Text>
+          <Text>{`${renderStartDate} ${renderEndDate}`}</Text>
         </View>
         <View>
           <Text style={styles.subtitle}>Carried out by</Text>
