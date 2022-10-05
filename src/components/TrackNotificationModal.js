@@ -1,4 +1,5 @@
 import { Text, View, StyleSheet } from "react-native";
+import { useTheme } from '@react-navigation/native';
 import GestureRecognizer from 'react-native-swipe-gestures';
 
 /**
@@ -9,6 +10,8 @@ import GestureRecognizer from 'react-native-swipe-gestures';
  * @returns 
  */
 const TrackNotificationModal = ({ visibility, properties, onClose }) => {
+  const { colors } = useTheme();
+
   const capitalizeString = (text) => {
     if(!text) return;
 
@@ -31,7 +34,7 @@ const TrackNotificationModal = ({ visibility, properties, onClose }) => {
   }
 
   return(
-    <GestureRecognizer onSwipeDown={() => onClose()} style={[styles.container, (visibility) && styles.visible]}>
+    <GestureRecognizer onSwipeDown={() => onClose()} style={[styles.container, (visibility) && styles.visible, { backgroundColor: colors.card }]}>
       <View style={styles.gestureBarContainer}>
         <View style={styles.gestureBar}></View>
       </View>
@@ -42,11 +45,11 @@ const TrackNotificationModal = ({ visibility, properties, onClose }) => {
         </View>
         <View>
           <Text style={styles.subtitle}>When</Text>
-          <Text>{`${renderStartDate} ${renderEndDate}`}</Text>
+          <Text style={{ color: colors.text }}>{`${renderStartDate} ${renderEndDate}`}</Text>
         </View>
         <View>
           <Text style={styles.subtitle}>Carried out by</Text>
-          <Text>{properties.organization}</Text>
+          <Text style={{ color: colors.text }}>{properties.organization}</Text>
         </View>
       </View>
     </GestureRecognizer>
@@ -68,7 +71,6 @@ const styles = StyleSheet.create({
     flex: 0.5,
     marginTop: 'auto',
     display: 'none',
-    backgroundColor: '#ffffff',
     paddingBottom: 20
   },
   visible: {

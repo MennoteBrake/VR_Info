@@ -1,13 +1,15 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import { SafeAreaView, StyleSheet } from 'react-native';
 import MapView, { Marker, Geojson } from 'react-native-maps';
 
 import { getAllTrainLocations, getTrackNotifications } from '../../API/VR';
 import TrackNotificationModal from '../../components/TrackNotificationModal';
+import { ThemeContext } from '../../contexts/Context';
 
 import { hasLocationPermission } from '../../permissions/Permissions';
 
 const MapScreen = ({ navigation }) => {
+  const { theme } = useContext(ThemeContext);
   const [trains, setTrains] = useState([]);
   const [trackNotifications, setTrackNotifications] = useState({});
   const [notificationDetails, setNotificationDetails] = useState({});
@@ -68,6 +70,7 @@ const MapScreen = ({ navigation }) => {
           longitudeDelta: 1
         }}
         showsUserLocation={true}
+        userInterfaceStyle={theme}
       >
         {
           trains && (
