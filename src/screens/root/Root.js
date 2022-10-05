@@ -9,6 +9,7 @@ import { ThemeContext } from '../../contexts/Context';
 import HomeScreen from './Home';
 import MapScreen from './Map';
 import SettingsScreen from './Settings';
+import JourneyPlanner from './planner/JourneyPlanner';
 
 const Tab = createBottomTabNavigator();
 
@@ -24,6 +25,8 @@ const RootScreen = ({ navigation }) => {
 
           if(route.name === "Home") {
             iconName = focused ? "ios-information-circle" : "ios-information-circle-outline";
+          } else if(route.name === "Journey Planner") {
+            iconName = "analytics-outline";
           } else if(route.name === "Map") {
             iconName = focused ? "map" : "map-outline";
           } else if(route.name === "Settings") {
@@ -39,6 +42,7 @@ const RootScreen = ({ navigation }) => {
       })}
     >
       <Tab.Screen name="Home" component={HomeScreen} />
+      <Tab.Screen name="Journey Planner" component={JourneyPlanner} />
       <Tab.Screen name="Map" component={MapScreen} />
       <Tab.Screen name="Settings" component={SettingsScreen} />
     </Tab.Navigator>

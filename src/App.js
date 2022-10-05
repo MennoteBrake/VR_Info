@@ -3,18 +3,24 @@ import { SafeAreaView, StatusBar, StyleSheet } from 'react-native';
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
+import { ApolloProvider } from '@apollo/client';
+import { client } from './API/GraphQL';
+
 import { ThemeProvider, ThemeContext } from './contexts/Context';
 
 import RootScreen from './screens/root/Root';
 import TrainDetailsScreen from './screens/trainDetails/TrainDetails';
 import StationDetailsScreen from './screens/stationDetails/StationDetails';
+import JourneyPlannerRoutes from './screens/root/planner/JourneyPlannerRoutes';
 
 const Stack = createNativeStackNavigator();
 
 const App = () => {
   return (
     <ThemeProvider>
-      <MainComponent />
+      <ApolloProvider client={client}>
+        <MainComponent />
+      </ApolloProvider>
     </ThemeProvider>
   );
 };
@@ -32,6 +38,7 @@ const MainComponent = () => {
           <Stack.Screen name="Root" component={RootScreen} options={{ headerShown: false }} />
           <Stack.Screen name="Train Details" component={TrainDetailsScreen} />
           <Stack.Screen name="Station Details" component={StationDetailsScreen} />
+          <Stack.Screen name="Routes" component={JourneyPlannerRoutes} />
         </Stack.Navigator>
       </NavigationContainer>
     </SafeAreaView>
