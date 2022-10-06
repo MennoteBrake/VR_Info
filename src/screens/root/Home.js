@@ -7,10 +7,11 @@ import {
   View,
   TouchableOpacity,
 } from 'react-native';
-import {SearchBar} from '../../components/SearchBar';
-
-import {fetchAllStations} from '../../db/VRIStations';
+import {useTheme} from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+
+import {SearchBar} from '../../components/SearchBar';
+import {fetchAllStations} from '../../db/VRIStations';
 import {fetchAllFavoriteStations} from '../../db/FavoriteStations';
 
 const HomeScreen = ({navigation}) => {
@@ -65,6 +66,7 @@ const HomeScreen = ({navigation}) => {
  * @param stackNavigation The parameter used to navigate to a page on the stackNavigation
  */
 const DisplaySearchResults = par => {
+  const {colors} = useTheme();
   async function getFavorites() {
     try {
       const data = await fetchAllFavoriteStations();
@@ -76,11 +78,11 @@ const DisplaySearchResults = par => {
 
   const addFavoriteIcon = () => {
     if (par.isInputEmpty) {
-      return <Ionicons name="bookmark" size={32}></Ionicons>;
+      return <Ionicons name="bookmark" size={32} color={colors.stationIcon}></Ionicons>;
     }
   };
 
-  if (par.isInputEmpty) {
+  if (par.isInputEmpty && par.searchResults.length == 0) {
     getFavorites();
   }
 
@@ -96,10 +98,14 @@ const DisplaySearchResults = par => {
                 shortCode: station.stationShortCode,
               })
             }>
-            <View style={styles.searchResults}>
+            <View
+              style={[styles.searchResults, {borderBottomColor: colors.text}]}>
               <View style={styles.basicSearchResults}>
-                <Ionicons name="train-sharp" size={32}></Ionicons>
-                <Text style={styles.searchResultsText}>
+                <Ionicons
+                  name="train-sharp"
+                  size={32}
+                  color={colors.stationIcon}></Ionicons>
+                <Text style={[styles.searchResultsText, {color: colors.text}]}>
                   {station.stationName}
                 </Text>
               </View>
@@ -135,7 +141,6 @@ const styles = StyleSheet.create({
     width: '95%',
     height: 50,
     paddingTop: 7,
-    borderBottomColor: 'gray',
     borderBottomWidth: StyleSheet.hairlineWidth,
   },
   basicSearchResults: {

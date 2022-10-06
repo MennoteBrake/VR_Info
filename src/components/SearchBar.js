@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import {TextInput, StyleSheet, View} from 'react-native';
+import { useTheme } from '@react-navigation/native';
 
 /**
  * Custom SearchBar component
@@ -12,6 +13,7 @@ import {TextInput, StyleSheet, View} from 'react-native';
  * @param setInputFieldEmpty a function to set a boolean variable that is describing if the input field is empty or not (true == empty, false == not empty)
  */
 export const SearchBar = par => {
+  const { colors } = useTheme();
   function filterList(textToFilter, filterFunc, list) {
     if (textToFilter != '') {
       par.setSearchResults([]); // clear the array
@@ -26,8 +28,9 @@ export const SearchBar = par => {
   return (
     <View style={styles.container}>
       <TextInput
-        style={styles.search}
+        style={[styles.search, {borderColor: colors.border, color: colors.text, backgroundColor: colors.card}]}
         placeholder="Search"
+        placeholderTextColor= {colors.text}
         onChangeText={filterText =>
           filterList(filterText, par.filterSearchResults, par.list)
         }
@@ -41,10 +44,10 @@ const styles = StyleSheet.create({
     width: '100%',
     justifyContent: 'flex-start',
     alignItems: 'center',
+    paddingTop:10
   },
   search: {
-    borderColor: 'black',
-    borderWidth: 1,
+    borderWidth: 2,
     borderRadius: 20,
     width: '95%',
     textAlign: 'center',

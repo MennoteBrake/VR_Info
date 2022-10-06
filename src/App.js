@@ -16,6 +16,23 @@ import {getStations} from './API/VR';
 
 const Stack = createNativeStackNavigator();
 
+const NewDarkTheme = {
+  ...DarkTheme,
+  colors:{
+    ...DarkTheme.colors,
+    stationIcon: '#adadad',
+  }
+}
+
+const NewDefaultTheme = {
+  ...DefaultTheme,
+  colors:{
+    ...DefaultTheme.colors,
+    stationIcon: '#adadad'
+  }
+}
+
+
 initDB()
   .then(() => {
     console.log('Database creation succeeded!');
@@ -41,8 +58,8 @@ const MainComponent = () => {
     <SafeAreaView style={[styles.container, ((theme === "dark") && styles.darkContainer)]}>
       <StatusBar
         barStyle={(theme === "dark") ? "light-content" : "dark-content"}
-        backgroundColor={(theme === "dark") ? DarkTheme.colors.background : DefaultTheme.colors.background} />
-      <NavigationContainer theme={(theme === "dark") ? DarkTheme : DefaultTheme}>
+        backgroundColor={(theme === "dark") ? NewDarkTheme.colors.background : NewDefaultTheme.colors.background} />
+      <NavigationContainer theme={(theme === "dark") ? NewDarkTheme : NewDefaultTheme}>
         <Stack.Navigator initialRouteName="Root">
           <Stack.Screen name="Root" component={RootScreen} options={{ headerShown: false }} />
           <Stack.Screen name="Train Details" component={TrainDetailsScreen} />
