@@ -6,7 +6,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import {SearchBar} from '../../components/SearchBar';
 import {fetchAllStations} from '../../db/VRIStations';
 import {fetchAllFavoriteStations} from '../../db/FavoriteStations';
-import {DisplaySearchResults} from '../../components/DisplaySearchResults';
+import DisplaySearchResults from '../../components/DisplaySearchResults';
 
 const HomeScreen = ({navigation}) => {
   const [searchResults, setSearchResults] = useState([]);
@@ -60,7 +60,6 @@ const HomeScreen = ({navigation}) => {
   );
 };
 
-// this takes a bit to long to do it this way, maybe do it on initialization of the app?
 const getAllStations = async setStationList => {
   try {
     const data = await fetchAllStations();
@@ -81,17 +80,6 @@ const getAllStations = async setStationList => {
 const DisplayStationSearchResults = par => {
   const {colors} = useTheme();
 
-  const addFavoriteIcon = () => {
-    if (par.isInputEmpty && par.useFavorites) {
-      return (
-        <Ionicons
-          name={'bookmark'}
-          size={32}
-          color={colors.stationIcon}></Ionicons>
-      );
-    }
-  };
-
   return (
     <View style={[styles.searchResults, {borderBottomColor: colors.text}]}>
       <View style={styles.basicSearchResults}>
@@ -103,7 +91,11 @@ const DisplayStationSearchResults = par => {
           {par.displayItem.stationName}
         </Text>
       </View>
-      <View>{addFavoriteIcon()}</View>
+      <View>
+        {
+          (par.isInputEmpty && par.useFavorites) && <Ionicons name={'bookmark'} size={32} color={colors.stationIcon}></Ionicons>
+        }
+      </View>
     </View>
   );
 };

@@ -12,7 +12,7 @@ import {ScrollView, StyleSheet, TouchableOpacity} from 'react-native';
  * @param useFavorites boolean, if true it will display a list with favorite results when nothing is searched
  * @param fetchFavorites a function that is used to fetch the favorites out of the database, this is not used when useFavorites == false
  */
-export const DisplaySearchResults = par => {
+const DisplaySearchResults = par => {
   async function getFavorites() {
     try {
       const data = await par.fetchFavorites();
@@ -45,6 +45,8 @@ export const DisplaySearchResults = par => {
     </ScrollView>
   );
 };
+
+export default DisplaySearchResults;
 
 const styles = StyleSheet.create({
   results: {

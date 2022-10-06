@@ -16,7 +16,7 @@ export const SearchBar = par => {
   const { colors } = useTheme();
   function filterList(textToFilter, filterFunc, list) {
     if (textToFilter != '') {
-      par.setSearchResults([]); // clear the array
+      par.setSearchResults([]);
       filterFunc(textToFilter, list);
       par.setInputFieldEmpty(false);
     } else {
