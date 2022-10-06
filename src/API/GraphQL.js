@@ -23,6 +23,26 @@ export const JOURNEY_ITINERARY_QUERY = gql`
             length
             points
           }
+          trip {
+            alerts {
+              alertDescriptionText
+            }
+            route {
+              shortName
+            }
+            bikesAllowed
+            pattern {
+              trips {
+                stoptimes {
+                  stop {
+                    name
+                  }
+                  realtimeArrival
+                  realtimeDeparture
+                }
+              }
+            }
+          }
           startTime
           endTime
           from {
@@ -39,12 +59,8 @@ export const JOURNEY_ITINERARY_QUERY = gql`
           distance
           agency {
             name
+            
           }
-        }
-        fares {
-          type
-          cents
-          currency
         }
       }
     }

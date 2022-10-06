@@ -1,4 +1,4 @@
-import { SafeAreaView, View, Text, StyleSheet, Alert } from "react-native";
+import { SafeAreaView, View, Text, StyleSheet, TouchableOpacity, Alert } from "react-native";
 import { useQuery } from "@apollo/client";
 import { useTheme } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -10,7 +10,6 @@ import Spinner from "../../../components/Spinner";
 const JourneyPlannerRoutesScreen = ({ route, navigation }) => {
   const { colors } = useTheme();
   const { from, to, date, time } = route.params;
-  console.log(date, time);
   const { data, loading, error } = useQuery(JOURNEY_ITINERARY_QUERY, {
     variables: {
       latFrom: 61.002222,
@@ -46,20 +45,26 @@ const JourneyPlannerRoutesScreen = ({ route, navigation }) => {
         ) : (
           <SafeAreaView style={styles.contentContainer}>
             {
-              data.plan.itineraries.map((route, index) => {
-                const startTime = new Date(route.startTime);
-                const endTime = new Date(route.endTime);
+              data.plan.itineraries.map((itinerary, index) => {
+                const startTime = new Date(itinerary.startTime);
+                const endTime = new Date(itinerary.endTime);
                 const journeyTimes = `${startTime.getHours()}:${(startTime.getMinutes() < 10 ? '0' : '') + startTime.getMinutes()} - ${endTime.getHours()}:${(endTime.getMinutes() < 10 ? '0' : '') + endTime.getMinutes()}`;
 
                 return(
-                  <View key={index} style={[styles.card, { backgroundColor: colors.card }]}>
+                  <TouchableOpacity
+                    key={index}
+                    style={[styles.card, { backgroundColor: colors.card }]}
+                    onPress={() => navigation.navigate("Route", {
+                      data: itinerary
+                    })}
+                  >
                     <View style={styles.header}>
                       <Text style={[styles.headerText, { color: colors.text }]}>{journeyTimes}</Text>
-                      <Text style={[styles.headerText, { color: colors.text }]}>{convertSecondsToHrsMins(route.duration)}</Text>
+                      <Text style={[styles.headerText, { color: colors.text }]}>{convertSecondsToHrsMins(itinerary.duration)}</Text>
                     </View>
                     <View style={styles.legs}>
                       {
-                        route.legs.map((leg, index) => {
+                        itinerary.legs.map((leg, index) => {
                           let icon = "help-circle-outline";
                           if(leg.mode === "WALK") {
                             icon = "walk";
@@ -72,8 +77,9 @@ const JourneyPlannerRoutesScreen = ({ route, navigation }) => {
                               styles.leg,
                               (leg.mode === "WALK" && styles.walk),
                               (leg.mode === "RAIL" && styles.rail),
-                              { width: (leg.duration / route.duration) * 100 + '%' }
-                            ]}>
+                              { width: (leg.duration / itinerary.duration) * 100 + '%' }
+                            ]}
+                            >
                               <Ionicons name={icon} size={20} color="#ffffff" />
                               <Text style={styles.legText}>{convertSecondsToHrsMins(leg.duration)}</Text>
                             </View>
@@ -81,7 +87,7 @@ const JourneyPlannerRoutesScreen = ({ route, navigation }) => {
                         })
                       }
                     </View>
-                  </View>
+                  </TouchableOpacity>
                 );
               })
             }

@@ -11,7 +11,8 @@ import { ThemeProvider, ThemeContext } from './contexts/Context';
 import RootScreen from './screens/root/Root';
 import TrainDetailsScreen from './screens/trainDetails/TrainDetails';
 import StationDetailsScreen from './screens/stationDetails/StationDetails';
-import JourneyPlannerRoutes from './screens/root/planner/JourneyPlannerRoutes';
+import JourneyPlannerRoutesScreen from './screens/root/planner/JourneyPlannerRoutes';
+import JourneyPlannerRouteScreen from './screens/root/planner/JourneyPlannerRoute';
 
 const Stack = createNativeStackNavigator();
 
@@ -38,7 +39,8 @@ const MainComponent = () => {
           <Stack.Screen name="Root" component={RootScreen} options={{ headerShown: false }} />
           <Stack.Screen name="Train Details" component={TrainDetailsScreen} />
           <Stack.Screen name="Station Details" component={StationDetailsScreen} />
-          <Stack.Screen name="Routes" component={JourneyPlannerRoutes} />
+          <Stack.Screen name="Routes" component={JourneyPlannerRoutesScreen} />
+          <Stack.Screen name="Route" component={JourneyPlannerRouteScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </SafeAreaView>
