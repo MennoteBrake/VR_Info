@@ -13,6 +13,8 @@ import Spinner from '../../components/Spinner';
 
 import { getStation } from '../../API/VR';
 
+import { dateToString } from '../../util/Util';
+
 const StationDetailsScreen = ({ route, navigation }) => {
   const { shortCode } = route.params;
 
@@ -98,7 +100,7 @@ const StationDetailsScreen = ({ route, navigation }) => {
                     <View style={styles.scheduleTimeCol}>
                       <View style={styles.scheduleTime}>
                         <Ionicons name="time-outline" size={15} color="#000000"/>
-                        <Text>{`${departure.departureDate.getHours()}:${(departure.departureDate.getMinutes() < 10 ? '0' : '') + departure.departureDate.getMinutes()}`}</Text>
+                        <Text>{dateToString(departure.departureDate)}</Text>
                       </View>
                       <View style={styles.scheduleDifference}>
                         {(departure.delayed) ? (

@@ -7,9 +7,10 @@ import { JOURNEY_ITINERARY_QUERY } from '../../../API/GraphQL';
 
 import Spinner from "../../../components/Spinner";
 
-const JourneyPlannerRoutesScreen = ({ route, navigation }) => {
+import { convertSecondsToHrsMins, dateToString } from "../../../util/Util";
+
+const JourneyPlannerRoutes = ({ to, from, date, time, navigation }) => {
   const { colors } = useTheme();
-  const { from, to, date, time } = route.params;
   const { data, loading, error } = useQuery(JOURNEY_ITINERARY_QUERY, {
     variables: {
       latFrom: 61.002222,
@@ -27,16 +28,6 @@ const JourneyPlannerRoutesScreen = ({ route, navigation }) => {
     Alert.alert("Error", "Something went wrong. Please try again.", [{ text: "OK", onPress: () => navigation.goBack() }]);
   }
 
-  const convertSecondsToHrsMins = (seconds) => {
-    let mins = seconds / 60;
-    let h = Math.floor(mins / 60);
-    let m = mins % 60;
-    h = h < 10 ? '0' + h : h;
-    m = Math.floor(m);
-    m = m < 10 ? '0' + m : m;
-    return `${h}:${m}`;
-  }
-
   return(
     <View style={styles.container}>
       {
@@ -44,11 +35,12 @@ const JourneyPlannerRoutesScreen = ({ route, navigation }) => {
           <Spinner />
         ) : (
           <SafeAreaView style={styles.contentContainer}>
+            <Text style={[styles.title, { color: colors.text}]}>Choose route</Text>
             {
               data.plan.itineraries.map((itinerary, index) => {
                 const startTime = new Date(itinerary.startTime);
                 const endTime = new Date(itinerary.endTime);
-                const journeyTimes = `${startTime.getHours()}:${(startTime.getMinutes() < 10 ? '0' : '') + startTime.getMinutes()} - ${endTime.getHours()}:${(endTime.getMinutes() < 10 ? '0' : '') + endTime.getMinutes()}`;
+                const journeyTimes = `${dateToString(startTime)} - ${dateToString(endTime)}`;
 
                 return(
                   <TouchableOpacity
@@ -60,7 +52,10 @@ const JourneyPlannerRoutesScreen = ({ route, navigation }) => {
                   >
                     <View style={styles.header}>
                       <Text style={[styles.headerText, { color: colors.text }]}>{journeyTimes}</Text>
-                      <Text style={[styles.headerText, { color: colors.text }]}>{convertSecondsToHrsMins(itinerary.duration)}</Text>
+                      <View style={styles.headerRow}>
+                        <Ionicons name="time-outline" size={15} color={colors.text} />
+                        <Text style={[styles.headerText, { color: colors.text }]}>{convertSecondsToHrsMins(itinerary.duration)}</Text>
+                      </View>
                     </View>
                     <View style={styles.legs}>
                       {
@@ -101,21 +96,31 @@ const JourneyPlannerRoutesScreen = ({ route, navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    flexDirection: 'column'
+    flexDirection: 'column',
+    paddingLeft: 20,
+    paddingRight: 20,
+    marginBottom: 20
   },
   contentContainer: {
     flex: 1
   },
+  title: {
+    fontWeight: 'bold',
+    fontSize: 18
+  },
   header: {
     flexDirection: 'row',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
+    marginBottom: 5
+  },
+  headerRow: {
+    flexDirection: 'row',
+    alignItems: 'center'
   },
   headerText: {
     fontWeight: 'bold'
   },
   card: {
-    marginLeft: 20,
-    marginRight: 20,
     marginTop: 10,
     borderRadius: 10,
     padding: 10
@@ -142,4 +147,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default JourneyPlannerRoutesScreen;
+export default JourneyPlannerRoutes;

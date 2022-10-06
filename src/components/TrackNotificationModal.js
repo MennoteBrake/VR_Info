@@ -1,6 +1,7 @@
 import { Text, View, StyleSheet } from "react-native";
 import { useTheme } from '@react-navigation/native';
 import GestureRecognizer from 'react-native-swipe-gestures';
+import { dateToString } from "../util/Util";
 
 const TrackNotificationModal = ({ visibility, properties, onClose }) => {
   const { colors } = useTheme();
@@ -15,8 +16,8 @@ const TrackNotificationModal = ({ visibility, properties, onClose }) => {
   const startDate = new Date(properties.startDate);
   const endDate = new Date(properties.endDate);
 
-  const startDateTime = (startDate.getHours() < 10 ? '0' : '') + startDate.getHours() + ":" + (startDate.getMinutes() < 10 ? '0' : '') + startDate.getMinutes();
-  const endDateTime = (endDate.getHours() < 10 ? '0' : '') + endDate.getHours() + ":" + (endDate.getMinutes() < 10 ? '0' : '') + endDate.getMinutes();
+  const startDateTime = dateToString(startDate);
+  const endDateTime = dateToString(endDate);
 
   return(
     <GestureRecognizer onSwipeDown={() => onClose()} style={[styles.container, (visibility) && styles.visible, { backgroundColor: colors.card }]}>
