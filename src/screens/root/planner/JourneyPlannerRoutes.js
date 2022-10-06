@@ -13,8 +13,8 @@ const JourneyPlannerRoutes = ({ to, from, date, time, navigation }) => {
   const { colors } = useTheme();
   const { data, loading, error } = useQuery(JOURNEY_ITINERARY_QUERY, {
     variables: {
-      latFrom: 61.002222,
-      lonFrom: 24.478333,
+      latFrom: 63.0975,
+      lonFrom: 21.621667,
       latTo: 60.171944,
       lonTo: 24.941389,
       date: date,

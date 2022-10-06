@@ -20,7 +20,6 @@ export const JOURNEY_ITINERARY_QUERY = gql`
         endTime
         legs {
           legGeometry {
-            length
             points
           }
           trip {
