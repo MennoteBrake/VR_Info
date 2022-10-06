@@ -14,6 +14,7 @@ const MapScreen = ({ navigation }) => {
   const [trackNotifications, setTrackNotifications] = useState({});
   const [notificationDetails, setNotificationDetails] = useState({});
   const [notificationModalVisible, setNotificationModalVisible] = useState(false);
+  const [stations, setStations]= useState([]);
 
   useEffect(() => {
     const fetchTrainData = async () => {
