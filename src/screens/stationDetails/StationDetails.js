@@ -70,7 +70,6 @@ const StationDetailsScreen = ({route, navigation}) => {
 
     const checkIfFavorite = async () => {
       let data = await checkIfFavoriteExists(shortCode).catch(console.error);
-      console.log(data);
       setIsFavorite(data);
     };
 

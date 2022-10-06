@@ -1,18 +1,12 @@
 import React, {useState} from 'react';
-import {
-  SafeAreaView,
-  Text,
-  ScrollView,
-  StyleSheet,
-  View,
-  TouchableOpacity,
-} from 'react-native';
+import {SafeAreaView, Text, StyleSheet, View} from 'react-native';
 import {useTheme} from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import {SearchBar} from '../../components/SearchBar';
 import {fetchAllStations} from '../../db/VRIStations';
 import {fetchAllFavoriteStations} from '../../db/FavoriteStations';
+import {DisplaySearchResults} from '../../components/DisplaySearchResults';
 
 const HomeScreen = ({navigation}) => {
   const [searchResults, setSearchResults] = useState([]);
@@ -30,6 +24,12 @@ const HomeScreen = ({navigation}) => {
         item.stationName.toLowerCase().includes(textToFilter.toLowerCase()),
       )
       .map(item => addToSearchList(item));
+  };
+
+  const navigateOnPress = displayItem => {
+    navigation.navigate('Station Details', {
+      shortCode: displayItem.stationShortCode,
+    });
   };
 
   if (stationList.length === 0) {
@@ -51,69 +51,12 @@ const HomeScreen = ({navigation}) => {
         amountToDisplay={amountOfItemsToDisplay}
         setSearchResults={setSearchResults}
         isInputEmpty={isInputFieldEmpty}
-        stackNavigation={navigation}
+        onPressFunc={navigateOnPress}
+        renderResult={DisplayStationSearchResults}
+        useFavorites={true}
+        fetchFavorites={fetchAllFavoriteStations}
       />
     </SafeAreaView>
-  );
-};
-
-/**
- * This component is used by the searchbar to display the search results.
- *
- * @param searchResults An arraylist with the results of the search that needs to be displayed.
- * @param amountToDisplay The amount of results to display on screen.
- * @param setSearchResults The set function for the searchResults arrayList
- * @param stackNavigation The parameter used to navigate to a page on the stackNavigation
- */
-const DisplaySearchResults = par => {
-  const {colors} = useTheme();
-  async function getFavorites() {
-    try {
-      const data = await fetchAllFavoriteStations();
-      par.setSearchResults(data);
-    } catch (err) {
-      console.log(err);
-    }
-  }
-
-  const addFavoriteIcon = () => {
-    if (par.isInputEmpty) {
-      return <Ionicons name="bookmark" size={32} color={colors.stationIcon}></Ionicons>;
-    }
-  };
-
-  if (par.isInputEmpty && par.searchResults.length == 0) {
-    getFavorites();
-  }
-
-  return (
-    <ScrollView style={styles.results}>
-      {par.searchResults
-        .filter((item, index) => index < par.amountToDisplay)
-        .map((station, index) => (
-          <TouchableOpacity
-            key={index}
-            onPress={() =>
-              par.stackNavigation.navigate('Station Details', {
-                shortCode: station.stationShortCode,
-              })
-            }>
-            <View
-              style={[styles.searchResults, {borderBottomColor: colors.text}]}>
-              <View style={styles.basicSearchResults}>
-                <Ionicons
-                  name="train-sharp"
-                  size={32}
-                  color={colors.stationIcon}></Ionicons>
-                <Text style={[styles.searchResultsText, {color: colors.text}]}>
-                  {station.stationName}
-                </Text>
-              </View>
-              <View>{addFavoriteIcon()}</View>
-            </View>
-          </TouchableOpacity>
-        ))}
-    </ScrollView>
   );
 };
 
@@ -125,6 +68,44 @@ const getAllStations = async setStationList => {
   } catch (err) {
     console.log(err);
   }
+};
+
+/**
+ * This component is used
+ *
+ * @param setSearchResults function to set the search result array.
+ * @param isInputEmpty Boolean that states if the input field is empty or not.
+ * @param displayItem The item that needs to be displayed
+ * @param useFavorites Boolean that states if it needs to use the favorites. If true it does.
+ */
+const DisplayStationSearchResults = par => {
+  const {colors} = useTheme();
+
+  const addFavoriteIcon = () => {
+    if (par.isInputEmpty && par.useFavorites) {
+      return (
+        <Ionicons
+          name={'bookmark'}
+          size={32}
+          color={colors.stationIcon}></Ionicons>
+      );
+    }
+  };
+
+  return (
+    <View style={[styles.searchResults, {borderBottomColor: colors.text}]}>
+      <View style={styles.basicSearchResults}>
+        <Ionicons
+          name="train-sharp"
+          size={32}
+          color={colors.stationIcon}></Ionicons>
+        <Text style={[styles.searchResultsText, {color: colors.text}]}>
+          {par.displayItem.stationName}
+        </Text>
+      </View>
+      <View>{addFavoriteIcon()}</View>
+    </View>
+  );
 };
 
 const styles = StyleSheet.create({
