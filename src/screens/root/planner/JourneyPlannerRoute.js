@@ -46,6 +46,19 @@ const JourneyPlannerRouteScreen = ({ route }) => {
     });
   }, [data]);
 
+  const mapGTFSToString = (id) => {
+    const map = {
+      "2": "Pendolino",
+      "102": "InterCity"
+    };
+
+    try {
+      return map[id.toString()];
+    } catch (error) {
+      return "Train"
+    }
+  };
+
   const label = (label) => {
     let position = (label.position > legs.length - 1) ?  legs.length - 1 : label.position;
 
@@ -59,14 +72,38 @@ const JourneyPlannerRouteScreen = ({ route }) => {
       <View>
         <Text style={[styles.place, {color: colors.text }]}>{label.label}</Text>
         {
-          (renderStartTime && <Text style={[label.position == 0 && styles.startTime, { color: colors.text }]}>{dateToString(new Date(startTime))}</Text>)
+          (legs[position].trip && <Text style={{color: colors.text}}>{`${mapGTFSToString(legs[position].trip.route.type)} ${legs[position].trip.route.shortName}`}</Text>)
         }
-        {
-          (renderEndTime && <Text style={[styles.startTime, { color: colors.text }]}>{dateToString(new Date(endTime))}</Text>)
-        }
+        <View style={{flexDirection: 'row'}}>
+          {
+            (renderStartTime && <Text style={[label.position == 0 && styles.startTime, { color: colors.text }]}>{dateToString(new Date(startTime))}</Text>)
+          }
+          {
+            (renderStartTime && renderEndTime && <Text style={{ color: colors.text }}> - </Text>)
+          }
+          {
+            (renderEndTime && <Text style={[styles.startTime, { color: colors.text }]}>{dateToString(new Date(endTime))}</Text>)
+          }
+        </View>
       </View>
     );
-  }
+  };
+
+  const stepIndicator = (stepIndicator) => {
+    let icon = "train";
+
+    if(stepIndicator.position == 0) {
+      icon = "location";
+    }
+
+    if(stepIndicator.position == legs.length) {
+      icon = "flag";
+    }
+
+    return(
+      <Ionicons name={icon} size={18} color="#ffffff" />
+    );
+  };
 
   const startTime = new Date(data.startTime);
   const endTime = new Date(data.endTime);
@@ -106,6 +143,7 @@ const JourneyPlannerRouteScreen = ({ route }) => {
               }}
               labels={stepLabels}
               renderLabel={label}
+              renderStepIndicator={stepIndicator}
               stepCount={stepLabels.length}
               currentPosition={stepLabels.length}
             />

@@ -13,10 +13,10 @@ const JourneyPlannerRoutes = ({ to, from, date, time, navigation }) => {
   const { colors } = useTheme();
   const { data, loading, error } = useQuery(JOURNEY_ITINERARY_QUERY, {
     variables: {
-      latFrom: 63.0975,
-      lonFrom: 21.621667,
-      latTo: 60.171944,
-      lonTo: 24.941389,
+      latFrom: 66.49803,
+      lonFrom: 25.70731,
+      latTo: 60.453944,
+      lonTo: 22.252972,
       date: date,
       time: time
     },
@@ -130,10 +130,10 @@ const styles = StyleSheet.create({
     height: 25
   },
   leg: {
-    flexShrink: 1,
+    flex: 1,
     alignItems: 'center',
     flexDirection: 'row',
-    minWidth: 70,
+    minWidth: 50,
   },
   legText: {
     color: '#ffffff',

@@ -27,19 +27,8 @@ export const JOURNEY_ITINERARY_QUERY = gql`
               alertDescriptionText
             }
             route {
+              type
               shortName
-            }
-            bikesAllowed
-            pattern {
-              trips {
-                stoptimes {
-                  stop {
-                    name
-                  }
-                  realtimeArrival
-                  realtimeDeparture
-                }
-              }
             }
           }
           startTime
@@ -50,16 +39,8 @@ export const JOURNEY_ITINERARY_QUERY = gql`
           to {
             name
           }
-          intermediateStops {
-            name
-          }
           mode
           duration
-          distance
-          agency {
-            name
-            
-          }
         }
       }
     }
