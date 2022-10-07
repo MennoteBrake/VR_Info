@@ -14,6 +14,7 @@ const MapScreen = ({ navigation }) => {
   const [trackNotifications, setTrackNotifications] = useState({});
   const [notificationDetails, setNotificationDetails] = useState({});
   const [notificationModalVisible, setNotificationModalVisible] = useState(false);
+  const [stations, setStations]= useState([]);
 
   useEffect(() => {
     const fetchTrainData = async () => {
@@ -26,7 +27,7 @@ const MapScreen = ({ navigation }) => {
       const newDate = new Date(currentDate);
       const futureDate = new Date(newDate.setDate(newDate.getDate() + 30));
 
-      let data = await getTrackNotifications("SENT", currentDate.toISOString(), futureDate.toISOString());
+      let data = await getTrackNotifications("SENT", currentDate.toISOString(), futureDate.toISOString()).catch(console.error);
       data.features = data.features.filter(feat => {
         return feat.geometry.type == "MultiLineString" || (feat.geometry.type == "Point" && feat.properties.hasOwnProperty("organization"))
       });
