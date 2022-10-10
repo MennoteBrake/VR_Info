@@ -29,6 +29,7 @@ const HomeScreen = ({navigation}) => {
   const navigateOnPress = displayItem => {
     navigation.navigate('Station Details', {
       shortCode: displayItem.stationShortCode,
+      stationName: displayItem.stationName,
     });
   };
 

@@ -28,7 +28,7 @@ const basicSqlQuery = sqlStatement => {
 
 export const initDB = async() => {
   basicSqlQuery(dropQuery + 'stationsVR');
-  basicSqlQuery(dropQuery + 'favoriteStationsVR');// this needs to be commented out in the production version
+  basicSqlQuery(dropQuery + 'favoriteStationsVR');
   basicSqlQuery(createStationsVR);
   basicSqlQuery(createFavoriteStationsVR);
 };

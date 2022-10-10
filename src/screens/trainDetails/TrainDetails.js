@@ -13,6 +13,8 @@ import Spinner from '../../components/Spinner';
 
 import { getTrainInfo } from '../../API/VR';
 
+import {fetchStationName} from '../../db/VRIStations'
+
 const TrainDetailsScreen = ({ route, navigation }) => {
   const { colors } = useTheme();
   const { trainNumber } = route.params;
@@ -30,6 +32,11 @@ const TrainDetailsScreen = ({ route, navigation }) => {
   });
   const [schedule, setSchedule] = useState([]);
 
+  const getStationName = async (stationShortCode) =>{
+    let data = await fetchStationName(stationShortCode).catch(console.error);
+    return (data.length > 0) ? data[0].stationName : "";
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       const trainData = await getTrainInfo(trainNumber);
@@ -42,6 +49,11 @@ const TrainDetailsScreen = ({ route, navigation }) => {
         return el.trainStopping && el.commercialStop
       });
 
+      for (let i = 0; i < stoppingAt.length; ++i)
+      {
+        stoppingAt[i].stationName = await getStationName(stoppingAt[i].stationShortCode);
+      }
+
       setTrain(trainData[0]);
       setSchedule(stoppingAt);
     }
@@ -53,9 +65,10 @@ const TrainDetailsScreen = ({ route, navigation }) => {
     navigation.setOptions({ title: `${train.trainCategory} train ${train.trainNumber}`})
   }, [train]);
 
-  const onStationClick = (shortCode) => {
+  const onStationClick = (shortCode, stationName) => {
     navigation.navigate("Station Details", {
-      shortCode: shortCode
+      shortCode: shortCode,
+      stationName: stationName,
     });
   };
 
@@ -68,14 +81,14 @@ const TrainDetailsScreen = ({ route, navigation }) => {
           <View style={styles.summaryBox}>
             <View style={styles.summaryItem}>
               <Text style={styles.summaryItemTextSmall}>From</Text>
-              <Text style={styles.summaryItemTextBig} onPress={() => onStationClick(train.timeTableRows[0].stationShortCode)}>{train.timeTableRows[0].stationShortCode}</Text>
+              <Text style={styles.summaryItemTextBig} onPress={() => onStationClick(train.timeTableRows[0].stationShortCode, train.timeTableRows[0].stationName)}>{train.timeTableRows[0].stationName}</Text>
             </View>
             <View style={styles.summaryItem}>
               <Ionicons name="arrow-forward" size={35} color="#ffffff"/>
             </View>
             <View style={styles.summaryItem}>
               <Text style={styles.summaryItemTextSmall}>To</Text>
-              <Text style={styles.summaryItemTextBig} onPress={() => onStationClick(train.timeTableRows[train.timeTableRows.length-1].stationShortCode)}>{train.timeTableRows[train.timeTableRows.length-1].stationShortCode}</Text>
+              <Text style={styles.summaryItemTextBig} onPress={() => onStationClick(train.timeTableRows[train.timeTableRows.length-1].stationShortCode, train.timeTableRows[train.timeTableRows.length-1].stationName)}>{train.timeTableRows[train.timeTableRows.length-1].stationName}</Text>
             </View>
           </View>
           <ScrollView>
@@ -87,7 +100,7 @@ const TrainDetailsScreen = ({ route, navigation }) => {
     
                 return(
                   <View key={index} style={[styles.scheduleRow, (passedStation && styles.passed), { backgroundColor: colors.card, borderColor: colors.border }]}>
-                    <Text style={{width: '15%', color: colors.text}} onPress={() => onStationClick(item.stationShortCode)}>{item.stationShortCode}</Text>
+                    <Text style={{width: '15%', color: colors.text}} onPress={() => onStationClick(item.stationShortCode, item.stationName)}>{item.stationName}</Text>
                     <Text style={{width: '25%', color: colors.text}}>{item.type}</Text>
                     <Text style={{width: '20%', color: colors.text}}>{item.commercialTrack}</Text>
                     <View style={styles.scheduleTimeCol}>

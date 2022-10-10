@@ -19,14 +19,22 @@ import {
   addFavoriteStation,
 } from '../../db/FavoriteStations';
 
+import {fetchStationName} from '../../db/VRIStations'
+
 const StationDetailsScreen = ({route, navigation}) => {
   const {shortCode} = route.params;
+  const {stationName} = route.params;
 
   const [departures, setDepartures] = useState([]);
 
   const [isFavorite, setIsFavorite] = useState(false);
 
-  useEffect(() => {
+  const getStationName = async (stationShortCode) =>{
+    let data = await fetchStationName(stationShortCode).catch(console.error);
+    return (data.length > 0) ? data[0].stationName : "";
+  };
+
+  useEffect(() => {   
     const fetchData = async () => {
       const stationData = await getStation(shortCode, 0, 0, 0, 15);
 
@@ -57,6 +65,7 @@ const StationDetailsScreen = ({route, navigation}) => {
             departureDate: departureDate,
             delayed: item.differenceInMinutes > 0,
             differenceInMinutes: item.differenceInMinutes,
+            destinationStationName: "",
           });
         });
       });
@@ -64,6 +73,11 @@ const StationDetailsScreen = ({route, navigation}) => {
       dep.sort((a, b) => {
         return new Date(a.departureDate) - new Date(b.departureDate);
       });
+
+      for(let i = 0; i < dep.length; ++i)
+      {
+        dep[i].destinationStationName = await getStationName(dep[i].destination);
+      }
 
       setDepartures(dep);
     };
@@ -78,12 +92,13 @@ const StationDetailsScreen = ({route, navigation}) => {
   }, []);
 
   useEffect(() => {
-    navigation.setOptions({title: shortCode});
+    navigation.setOptions({title: stationName});
   }, []);
 
-  const onDestinationPress = destination => {
+  const onDestinationPress = (destination, destinationStationName) => {
     navigation.push('Station Details', {
       shortCode: destination,
+      stationName: destinationStationName,
     });
   };
 
@@ -125,8 +140,8 @@ const StationDetailsScreen = ({route, navigation}) => {
               return (
                 <View key={index} style={styles.departures}>
                   <Text
-                    onPress={() => onDestinationPress(departure.destination)}>
-                    {departure.destination}
+                    onPress={() => onDestinationPress(departure.destination, departure.destinationStationName)}>
+                    {departure.destinationStationName}
                   </Text>
                   <Text onPress={() => onDeparturePress(departure.trainNumber)}>
                     {departure.commuterLineID

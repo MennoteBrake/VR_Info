@@ -69,7 +69,7 @@ export const fetchAllFavoriteStations = () => {
           tableName +
           ' inner join stationsVR on ' +
           tableName +
-          '.stationShortCode=stationsVR.stationShortCode',
+          '.stationShortCode=stationsVR.stationShortCode;',
         [],
         (tx, result) => {
           resolve(result.rows.raw());
