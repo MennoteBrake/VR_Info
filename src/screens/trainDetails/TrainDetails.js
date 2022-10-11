@@ -81,12 +81,10 @@ const TrainDetailsScreen = ({ route, navigation }) => {
     let txt = (text1.length > text2.length) ? text1 : text2;
 
     let size = Math.round(widthPercentageToDP('30%') / (txt.length / 2));
-    console.log(size);
     if(size < summaryItemTextBigFontSize)
     {
       setSummaryItemTextBigFontSize(size);
     }
-    console.log(summaryItemTextBigFontSize);
   }
 
   return(
