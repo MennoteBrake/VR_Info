@@ -13,6 +13,8 @@ import Spinner from '../../components/Spinner';
 
 import { getTrainInfo } from '../../API/VR';
 
+import { dateToString } from '../../util/Util';
+
 const TrainDetailsScreen = ({ route, navigation }) => {
   const { colors } = useTheme();
   const { trainNumber } = route.params;
@@ -93,7 +95,7 @@ const TrainDetailsScreen = ({ route, navigation }) => {
                     <View style={styles.scheduleTimeCol}>
                       <View style={styles.scheduleTime}>
                         <Ionicons name="time-outline" size={15} color={colors.text}/>
-                        <Text style={{color: colors.text}}>{`${scheduledTime.getHours()}:${(scheduledTime.getMinutes() < 10 ? '0' : '') + scheduledTime.getMinutes()}`}</Text>
+                        <Text style={{color: colors.text}}>{dateToString(scheduledTime)}</Text>
                       </View>
                       <View>
                         {(item.differenceInMinutes > 0) ? (

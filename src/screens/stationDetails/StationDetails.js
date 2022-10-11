@@ -19,11 +19,11 @@ import {
   addFavoriteStation,
 } from '../../db/FavoriteStations';
 
-const StationDetailsScreen = ({route, navigation}) => {
-  const {shortCode} = route.params;
+import { dateToString } from '../../util/Util';
 
+const StationDetailsScreen = ({ route, navigation }) => {
+  const { shortCode } = route.params;
   const [departures, setDepartures] = useState([]);
-
   const [isFavorite, setIsFavorite] = useState(false);
 
   useEffect(() => {
@@ -121,41 +121,30 @@ const StationDetailsScreen = ({route, navigation}) => {
             </TouchableOpacity>
           </View>
           <ScrollView>
-            {departures.map((departure, index) => {
-              return (
-                <View key={index} style={styles.departures}>
-                  <Text
-                    onPress={() => onDestinationPress(departure.destination)}>
-                    {departure.destination}
-                  </Text>
-                  <Text onPress={() => onDeparturePress(departure.trainNumber)}>
-                    {departure.commuterLineID
-                      ? departure.commuterLineID
-                      : `${departure.trainType}${departure.trainNumber}`}
-                  </Text>
-                  <Text>{departure.track}</Text>
-                  <View style={styles.scheduleTimeCol}>
-                    <View style={styles.scheduleTime}>
-                      <Ionicons name="time-outline" size={15} color="#000000" />
-                      <Text>{`${departure.departureDate.getHours()}:${
-                        (departure.departureDate.getMinutes() < 10 ? '0' : '') +
-                        departure.departureDate.getMinutes()
-                      }`}</Text>
-                    </View>
-                    <View style={styles.scheduleDifference}>
-                      {departure.delayed ? (
-                        <Text
-                          style={
-                            styles.delay
-                          }>{`+${departure.differenceInMinutes}`}</Text>
-                      ) : (
-                        <Text style={styles.onTime}>On time</Text>
-                      )}
+            {
+              departures.map((departure, index) => {
+                return(
+                  <View key={index} style={styles.departures}>
+                    <Text onPress={() => onDestinationPress(departure.destination)}>{departure.destination}</Text>
+                    <Text onPress={() => onDeparturePress(departure.trainNumber)}>{(departure.commuterLineID) ? departure.commuterLineID : `${departure.trainType}${departure.trainNumber}`}</Text>
+                    <Text>{departure.track}</Text>
+                    <View style={styles.scheduleTimeCol}>
+                      <View style={styles.scheduleTime}>
+                        <Ionicons name="time-outline" size={15} color="#000000"/>
+                        <Text>{dateToString(departure.departureDate)}</Text>
+                      </View>
+                      <View style={styles.scheduleDifference}>
+                        {(departure.delayed) ? (
+                          <Text style={styles.delay}>{`+${departure.differenceInMinutes}`}</Text>
+                        ) : (
+                          <Text style={styles.onTime}>On time</Text>
+                        )}
+                      </View>
                     </View>
                   </View>
-                </View>
-              );
-            })}
+                );
+              })
+            }
           </ScrollView>
         </SafeAreaView>
       )}
