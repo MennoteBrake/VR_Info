@@ -71,13 +71,15 @@ const MainComponent = () => {
 };
 
 const insertStationsToDB = async () => {
+  const station = " asema"; // station in Finish
   let data = await getStations();
+  
   {
     data.map((item, index) =>
       addStation(
         item.passengerTraffic,
         item.type,
-        item.stationName,
+        (item.stationName.replace(station, "")),
         item.stationShortCode,
         item.stationUICCode,
         item.countryCode,

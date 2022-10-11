@@ -114,3 +114,22 @@ export const fetchStationName = stationShortCode => {
   });
   return promise;
 };
+
+export const fetchAllPassengerStations = () => {
+  const promise = new Promise((resolve, reject) => {
+    db.transaction(tx => {
+      tx.executeSql(
+        'select * from ' + tableName + " where passengerTraffic=true",
+        [],
+        (tx, result) => {
+          resolve(result.rows.raw()); 
+        },
+        (tx, err) => {
+          console.log(err);
+          reject(err);
+        },
+      );
+    });
+  });
+  return promise;
+};

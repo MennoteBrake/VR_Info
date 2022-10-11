@@ -4,7 +4,7 @@ import {useTheme} from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import {SearchBar} from '../../components/SearchBar';
-import {fetchAllStations} from '../../db/VRIStations';
+import {fetchAllPassengerStations} from '../../db/VRIStations';
 import {fetchAllFavoriteStations} from '../../db/FavoriteStations';
 import DisplaySearchResults from '../../components/DisplaySearchResults';
 
@@ -63,7 +63,7 @@ const HomeScreen = ({navigation}) => {
 
 const getAllStations = async setStationList => {
   try {
-    const data = await fetchAllStations();
+    const data = await fetchAllPassengerStations();
     setStationList(data);
   } catch (err) {
     console.log(err);

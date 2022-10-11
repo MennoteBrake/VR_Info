@@ -9,19 +9,15 @@ import {
 } from 'react-native';
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
-
 import Spinner from '../../components/Spinner';
+import { useTheme } from '@react-navigation/native';
 
 import {getStation} from '../../API/VR';
-import {
-  deleteFavoriteStation,
-  checkIfFavoriteExists,
-  addFavoriteStation,
-} from '../../db/FavoriteStations';
-
+import { deleteFavoriteStation, checkIfFavoriteExists, addFavoriteStation, } from '../../db/FavoriteStations';
 import {fetchStationName} from '../../db/VRIStations'
 
 const StationDetailsScreen = ({route, navigation}) => {
+  const { colors } = useTheme();
   const {shortCode} = route.params;
   const {stationName} = route.params;
 
@@ -34,7 +30,7 @@ const StationDetailsScreen = ({route, navigation}) => {
     return (data.length > 0) ? data[0].stationName : "";
   };
 
-  useEffect(() => {   
+  useEffect(() => {
     const fetchData = async () => {
       const stationData = await getStation(shortCode, 0, 0, 0, 15);
 
@@ -89,11 +85,11 @@ const StationDetailsScreen = ({route, navigation}) => {
 
     checkIfFavorite();
     fetchData().catch(console.error);
-  }, []);
+  }, [stationName]);
 
   useEffect(() => {
     navigation.setOptions({title: stationName});
-  }, []);
+  }, [stationName]);
 
   const onDestinationPress = (destination, destinationStationName) => {
     navigation.push('Station Details', {
@@ -138,21 +134,23 @@ const StationDetailsScreen = ({route, navigation}) => {
           <ScrollView>
             {departures.map((departure, index) => {
               return (
-                <View key={index} style={styles.departures}>
-                  <Text
+                <View key={index} style={[styles.departures, {backgroundColor: colors.card, borderColor: colors.border}]}>
+                  <Text style={{width: '25%', color: colors.text}}
                     onPress={() => onDestinationPress(departure.destination, departure.destinationStationName)}>
                     {departure.destinationStationName}
                   </Text>
-                  <Text onPress={() => onDeparturePress(departure.trainNumber)}>
+                  <Text style={{width: '20%', color: colors.text}}
+                    onPress={() => onDeparturePress(departure.trainNumber)}>
                     {departure.commuterLineID
                       ? departure.commuterLineID
                       : `${departure.trainType}${departure.trainNumber}`}
                   </Text>
-                  <Text>{departure.track}</Text>
+                  <Text style={{width: '10%', color: colors.text}}>{departure.track}</Text>
                   <View style={styles.scheduleTimeCol}>
                     <View style={styles.scheduleTime}>
-                      <Ionicons name="time-outline" size={15} color="#000000" />
-                      <Text>{`${departure.departureDate.getHours()}:${
+                      <Ionicons name="time-outline" size={15} color={colors.text} />
+                      <Text style={{color: colors.text}} >
+                        {`${departure.departureDate.getHours()}:${
                         (departure.departureDate.getMinutes() < 10 ? '0' : '') +
                         departure.departureDate.getMinutes()
                       }`}</Text>

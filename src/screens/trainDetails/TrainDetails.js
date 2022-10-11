@@ -15,6 +15,8 @@ import { getTrainInfo } from '../../API/VR';
 
 import {fetchStationName} from '../../db/VRIStations'
 
+import {widthPercentageToDP} from '../../util/Util'
+
 const TrainDetailsScreen = ({ route, navigation }) => {
   const { colors } = useTheme();
   const { trainNumber } = route.params;
@@ -31,6 +33,8 @@ const TrainDetailsScreen = ({ route, navigation }) => {
     ]
   });
   const [schedule, setSchedule] = useState([]);
+  const defaultSummaryItemTextBigFontSize = 30;
+  const [summaryItemTextBigFontSize, setSummaryItemTextBigFontSize] = useState(defaultSummaryItemTextBigFontSize);
 
   const getStationName = async (stationShortCode) =>{
     let data = await fetchStationName(stationShortCode).catch(console.error);
@@ -72,6 +76,19 @@ const TrainDetailsScreen = ({ route, navigation }) => {
     });
   };
 
+  const selectCorrectFontSize = (text1, text2) => 
+  {
+    let txt = (text1.length > text2.length) ? text1 : text2;
+
+    let size = Math.round(widthPercentageToDP('30%') / (txt.length / 2));
+    console.log(size);
+    if(size < summaryItemTextBigFontSize)
+    {
+      setSummaryItemTextBigFontSize(size);
+    }
+    console.log(summaryItemTextBigFontSize);
+  }
+
   return(
     <View style={styles.container}>
       {(!train.trainNumber || !schedule.length) ? (
@@ -80,15 +97,16 @@ const TrainDetailsScreen = ({ route, navigation }) => {
         <SafeAreaView style={styles.contentContainer}>
           <View style={styles.summaryBox}>
             <View style={styles.summaryItem}>
+              {selectCorrectFontSize(train.timeTableRows[0].stationName, train.timeTableRows[train.timeTableRows.length-1].stationName)}
               <Text style={styles.summaryItemTextSmall}>From</Text>
-              <Text style={styles.summaryItemTextBig} onPress={() => onStationClick(train.timeTableRows[0].stationShortCode, train.timeTableRows[0].stationName)}>{train.timeTableRows[0].stationName}</Text>
+              <Text style={[styles.summaryItemTextBig, {fontSize:summaryItemTextBigFontSize}]} onPress={() => onStationClick(train.timeTableRows[0].stationShortCode, train.timeTableRows[0].stationName)}>{train.timeTableRows[0].stationName}</Text>
             </View>
             <View style={styles.summaryItem}>
               <Ionicons name="arrow-forward" size={35} color="#ffffff"/>
             </View>
             <View style={styles.summaryItem}>
               <Text style={styles.summaryItemTextSmall}>To</Text>
-              <Text style={styles.summaryItemTextBig} onPress={() => onStationClick(train.timeTableRows[train.timeTableRows.length-1].stationShortCode, train.timeTableRows[train.timeTableRows.length-1].stationName)}>{train.timeTableRows[train.timeTableRows.length-1].stationName}</Text>
+              <Text style={[styles.summaryItemTextBig, {fontSize:summaryItemTextBigFontSize}]} onPress={() => onStationClick(train.timeTableRows[train.timeTableRows.length-1].stationShortCode, train.timeTableRows[train.timeTableRows.length-1].stationName)}>{train.timeTableRows[train.timeTableRows.length-1].stationName}</Text>
             </View>
           </View>
           <ScrollView>
@@ -100,7 +118,7 @@ const TrainDetailsScreen = ({ route, navigation }) => {
     
                 return(
                   <View key={index} style={[styles.scheduleRow, (passedStation && styles.passed), { backgroundColor: colors.card, borderColor: colors.border }]}>
-                    <Text style={{width: '15%', color: colors.text}} onPress={() => onStationClick(item.stationShortCode, item.stationName)}>{item.stationName}</Text>
+                    <Text style={{width: '25%', color: colors.text}} onPress={() => onStationClick(item.stationShortCode, item.stationName)}>{item.stationName}</Text>
                     <Text style={{width: '25%', color: colors.text}}>{item.type}</Text>
                     <Text style={{width: '20%', color: colors.text}}>{item.commercialTrack}</Text>
                     <View style={styles.scheduleTimeCol}>
@@ -156,7 +174,6 @@ const styles = StyleSheet.create({
   },
   summaryItemTextBig: {
     color: '#ffffff',
-    fontSize: 30,
     fontWeight: 'bold'
   },
   scheduleRow: {
