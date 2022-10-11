@@ -23,7 +23,6 @@ const TrackNotificationModal = ({ visibility, properties, onClose }) => {
   const startDate = new Date(properties.startDate);
   const endDate = new Date(properties.endDate);
 
-  // convert to correct time notation, e.g. 12:1 should be 12:01
   const startDateTime = dateToString(startDate);
   const endDateTime = dateToString(endDate);
 

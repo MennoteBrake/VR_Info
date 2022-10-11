@@ -70,7 +70,7 @@ const JourneyPlannerRoutes = ({ to, from, date, time, navigation }) => {
                           return(
                             <View key={index} style={[
                               styles.leg,
-                              (leg.mode === "WALK" && styles.walk),
+                              (leg.mode === "WALK" && { backgroundColor: colors.border }),
                               (leg.mode === "RAIL" && styles.rail),
                               { width: (leg.duration / itinerary.duration) * 100 + '%' }
                             ]}
@@ -138,9 +138,6 @@ const styles = StyleSheet.create({
   legText: {
     color: '#ffffff',
     fontWeight: 'bold'
-  },
-  walk: {
-    backgroundColor: '#e2e2e2'
   },
   rail: {
     backgroundColor: '#00b451'

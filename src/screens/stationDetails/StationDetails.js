@@ -142,9 +142,9 @@ const StationDetailsScreen = ({ route, navigation }) => {
                       </View>
                     </View>
                   </View>
-                </View>
-              );
-            })}
+                );
+              })
+            }
           </ScrollView>
         </SafeAreaView>
       )}

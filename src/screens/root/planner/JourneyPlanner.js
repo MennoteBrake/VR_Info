@@ -35,7 +35,7 @@ const JourneyPlannerScreen = ({ navigation }) => {
       <View style={[styles.contentContainer, { backgroundColor: colors.background }]}>
         <View style={[styles.card, { backgroundColor: colors.card }]}>
           <View>
-            <TextInput placeholder="From" onChangeText={setFrom} value={from} placeholderTextColor={colors.border} style={{color: colors.text}} />
+            <TextInput placeholder="From" onChangeText={setFrom} value={from} placeholderTextColor={colors.text} style={{color: colors.text}} />
           </View>
           <View style={styles.seperatorContainer}>
             <View style={[styles.seperator, { borderBottomColor: colors.border }]} />
@@ -43,7 +43,7 @@ const JourneyPlannerScreen = ({ navigation }) => {
             <View style={[styles.seperator, { borderBottomColor: colors.border }]} />
           </View>
           <View>
-            <TextInput placeholder="To" onChangeText={setTo} value={to} placeholderTextColor={colors.border} style={{color: colors.text}} />
+            <TextInput placeholder="To" onChangeText={setTo} value={to} placeholderTextColor={colors.text} style={{color: colors.text}} />
           </View>
         </View>
         <View style={[styles.card, { width: '50%', backgroundColor: colors.card }]}>
@@ -62,7 +62,9 @@ const JourneyPlannerScreen = ({ navigation }) => {
             }}
           />
         </View>
-        <Button onPress={() => setShowRoutes(true)} title="Search"/>
+        <View style={styles.button}>
+          <Button onPress={() => setShowRoutes(true)} title="Search" />
+        </View>
         {
           (showRoutes && (
             <ScrollView>
@@ -114,6 +116,11 @@ const styles = StyleSheet.create({
     marginRight: 20,
     borderRadius: 10,
     padding: 10
+  },
+  button: {
+    width: 100,
+    alignSelf: 'center',
+    marginTop: 10
   }
 });
 
