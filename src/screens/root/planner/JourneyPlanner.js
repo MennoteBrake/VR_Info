@@ -1,30 +1,79 @@
 import { useEffect, useState } from 'react';
-import { Button, SafeAreaView, View, Text, TextInput, Image, StyleSheet, ScrollView } from "react-native";
+import { Button, SafeAreaView, View, Text, StyleSheet, ScrollView } from "react-native";
 import { useTheme } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import DatePicker from 'react-native-date-picker';
 
+import SearchBar from '../../../components/SearchBar';
 import JourneyPlannerRoutes from './JourneyPlannerRoutes';
+import { fetchAllStations } from '../../../db/VRIStations';
+import StationSearchResults from '../../../components/StationSearchResults';
 
 const JourneyPlannerScreen = ({ navigation }) => {
   const { colors } = useTheme();
 
-  const [from, setFrom] = useState("");
-  const [to, setTo] = useState("");
+  const [from, setFrom] = useState({});
+  const [fromStationName, setFromStationName] = useState("");
+
+  const [to, setTo] = useState({});
+  const [toStationName, setToStationName] = useState("");
+
+  const [stationList, setStationList] = useState([]);
+
+  const [searchResultsFrom, setSearchResultsFrom] = useState([]);
+  const [searchResultsTo, setSearchResultsTo] = useState([]);
+  const [isInputFieldEmpty, setInputFieldEmpty] = useState(true);
 
   const [openDatePicker, setOpenDatePicker] = useState(false);
   const [date, setDate] = useState(new Date());
 
   const [showRoutes, setShowRoutes] = useState(false);
 
-  const onSeperatorPress = () => {
-    setFrom(to);
-    setTo(from);
+  const filterStations = (text, list) => {
+    const filtered = list.filter((item) =>
+      item.stationName.toLowerCase().includes(text.toLowerCase())
+    );
+
+    return filtered;
+  }
+
+  const filterStationsFrom = (textToFilter, list) => {
+    setSearchResultsFrom(filterStations(textToFilter, list));
   };
 
+  const filterStationsTo = (textToFilter, list) => {
+    setSearchResultsTo(filterStations(textToFilter, list));
+  };
+
+  const onSeperatorPress = () => {
+    setFrom(to);
+    setFromStationName(toStationName);
+
+    setTo(from);
+    setToStationName(fromStationName);
+  };
+
+  const onFromPress = (station) => {
+    setFrom(station);
+    setFromStationName(station.stationName);
+    setSearchResultsFrom([]);
+  }
+
+  const onToPress = (station) => {
+    setTo(station);
+    setToStationName(station.stationName);
+    setSearchResultsTo([]);
+  }
+
   useEffect(() => {
-    setShowRoutes(false)
-  }, [from, to, date]);
+    fetchAllStations()
+    .then((data) => setStationList(data))
+    .catch((e) => console.log(e));
+  }, []);
+
+  useEffect(() => {
+    setShowRoutes(false);
+  }, [fromStationName, toStationName , date]);
 
   return(
     <SafeAreaView style={styles.container}>
@@ -34,17 +83,33 @@ const JourneyPlannerScreen = ({ navigation }) => {
       </View>
       <View style={[styles.contentContainer, { backgroundColor: colors.background }]}>
         <View style={[styles.card, { backgroundColor: colors.card }]}>
-          <View>
-            <TextInput placeholder="From" onChangeText={setFrom} value={from} placeholderTextColor={colors.text} style={{color: colors.text}} />
-          </View>
+          <SearchBar
+            placeholder="From"
+            list={stationList}
+            filterSearchResults={filterStationsFrom}
+            searchResults={searchResultsFrom}
+            setSearchResults={setSearchResultsFrom}
+            setInputFieldEmpty={setInputFieldEmpty}
+            value={fromStationName}
+            onChangeValue={setFromStationName}
+          />
+          <StationSearchResults results={searchResultsFrom} onResultPress={onFromPress} />
           <View style={styles.seperatorContainer}>
             <View style={[styles.seperator, { borderBottomColor: colors.border }]} />
             <Ionicons name="swap-vertical" size={30} color={colors.primary} onPress={onSeperatorPress} />
             <View style={[styles.seperator, { borderBottomColor: colors.border }]} />
           </View>
-          <View>
-            <TextInput placeholder="To" onChangeText={setTo} value={to} placeholderTextColor={colors.text} style={{color: colors.text}} />
-          </View>
+          <SearchBar
+            placeholder="To"
+            list={stationList}
+            filterSearchResults={filterStationsTo}
+            searchResults={searchResultsTo}
+            setSearchResults={setSearchResultsTo}
+            setInputFieldEmpty={setInputFieldEmpty}
+            value={toStationName}
+            onChangeValue={setToStationName}
+          />
+          <StationSearchResults results={searchResultsTo} onResultPress={onToPress} />
         </View>
         <View style={[styles.card, { width: '50%', backgroundColor: colors.card }]}>
           <Text style={{ color: colors.text }} onPress={() => setOpenDatePicker(true)}>{date.toLocaleString('en-FI', {hour12: false, timeZone: "Europe/Helsinki"})}</Text>
