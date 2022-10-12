@@ -99,12 +99,31 @@ export const fetchStationName = stationShortCode => {
   const promise = new Promise((resolve, reject) => {
     db.transaction(tx => {
       tx.executeSql(
-        'select * from ' + tableName + ' where stationShortCode=?',
+        'select * from ' + tableName + ' where stationShortCode=?;',
         [stationShortCode],
         (tx, result) => {
           resolve(result.rows.raw()); 
         },
         (err) => {
+          reject(err);
+        },
+      );
+    });
+  });
+  return promise;
+};
+
+export const fetchAllPassengerStations = () => {
+  const promise = new Promise((resolve, reject) => {
+    db.transaction(tx => {
+      tx.executeSql(
+        'select * from ' + tableName + " where passengerTraffic=true",
+        [],
+        (tx, result) => {
+          resolve(result.rows.raw()); 
+        },
+        (err) => {
+          console.log(err);
           reject(err);
         },
       );

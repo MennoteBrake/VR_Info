@@ -80,12 +80,13 @@ const MainComponent = () => {
 };
 
 const insertStationsToDB = async () => {
+  const stationPostfix = " asema";
   const stations = await getStations();
   stations.forEach((station) => {
     addStation(
       station.passengerTraffic,
       station.type,
-      station.stationName,
+      (station.stationName.replace(stationPostfix, "")),
       station.stationShortCode,
       station.stationUICCode,
       station.countryCode,

@@ -1,11 +1,11 @@
-import React, {useEffect, useState} from 'react';
-import {SafeAreaView, Text, StyleSheet, View} from 'react-native';
-import {useTheme} from '@react-navigation/native';
+import React, { useState } from 'react';
+import { SafeAreaView, Text, StyleSheet, View } from 'react-native';
+import { useTheme } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import SearchBar from '../../components/SearchBar';
-import {fetchAllStations} from '../../db/VRIStations';
-import {fetchAllFavoriteStations} from '../../db/FavoriteStations';
+import { fetchAllPassengerStations } from '../../db/VRIStations';
+import { fetchAllFavoriteStations } from '../../db/FavoriteStations';
 import DisplaySearchResults from '../../components/DisplaySearchResults';
 
 const HomeScreen = ({navigation}) => {
@@ -26,11 +26,12 @@ const HomeScreen = ({navigation}) => {
   const navigateOnPress = displayItem => {
     navigation.navigate('Station Details', {
       shortCode: displayItem.stationShortCode,
+      stationName: displayItem.stationName,
     });
   };
 
   if (stationList.length === 0) {
-    fetchAllStations()
+    fetchAllPassengerStations()
     .then((stations) => setStationList(stations))
     .catch(console.error);
   }

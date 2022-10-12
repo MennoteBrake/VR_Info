@@ -1,10 +1,5 @@
 import { useEffect, useState } from 'react';
-import {
-  SafeAreaView,
-  View,
-  Text,
-  StyleSheet,
-} from 'react-native';
+import { SafeAreaView, View, Text, StyleSheet } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useTheme } from '@react-navigation/native';
@@ -12,8 +7,8 @@ import { useTheme } from '@react-navigation/native';
 import Spinner from '../../components/Spinner';
 
 import { getTrainInfo } from '../../API/VR';
-
-import { dateToString } from '../../util/Util';
+import { fetchStationName } from '../../db/VRIStations'
+import { selectMaximumFontSize, dateToString } from '../../util/Util'
 
 const TrainDetailsScreen = ({ route, navigation }) => {
   const { colors } = useTheme();
@@ -31,6 +26,13 @@ const TrainDetailsScreen = ({ route, navigation }) => {
     ]
   });
   const [schedule, setSchedule] = useState([]);
+  const defaultSummaryItemTextBigFontSize = 30;
+  const [summaryItemTextBigFontSize, setSummaryItemTextBigFontSize] = useState(defaultSummaryItemTextBigFontSize);
+
+  const getStationName = async (stationShortCode) =>{
+    let data = await fetchStationName(stationShortCode).catch(console.error);
+    return (data.length > 0) ? data[0].stationName : "";
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -44,6 +46,11 @@ const TrainDetailsScreen = ({ route, navigation }) => {
         return el.trainStopping && el.commercialStop
       });
 
+      for (let i = 0; i < stoppingAt.length; ++i)
+      {
+        stoppingAt[i].stationName = await getStationName(stoppingAt[i].stationShortCode);
+      }
+
       setTrain(trainData[0]);
       setSchedule(stoppingAt);
     }
@@ -55,11 +62,23 @@ const TrainDetailsScreen = ({ route, navigation }) => {
     navigation.setOptions({ title: `${train.trainCategory} train ${train.trainNumber}`})
   }, [train]);
 
-  const onStationClick = (shortCode) => {
+  const onStationClick = (shortCode, stationName) => {
     navigation.navigate("Station Details", {
-      shortCode: shortCode
+      shortCode: shortCode,
+      stationName: stationName,
     });
   };
+
+  const selectCorrectFontSize = (text1, text2) => 
+  {
+    let txt = (text1.length > text2.length) ? text1 : text2;
+    let size = selectMaximumFontSize(txt, '29%');
+
+    if(size < summaryItemTextBigFontSize)
+    {
+      setSummaryItemTextBigFontSize(size);
+    }
+  }
 
   return(
     <View style={styles.container}>
@@ -69,15 +88,16 @@ const TrainDetailsScreen = ({ route, navigation }) => {
         <SafeAreaView style={styles.contentContainer}>
           <View style={styles.summaryBox}>
             <View style={styles.summaryItem}>
+              {selectCorrectFontSize(train.timeTableRows[0].stationName, train.timeTableRows[train.timeTableRows.length-1].stationName)}
               <Text style={styles.summaryItemTextSmall}>From</Text>
-              <Text style={styles.summaryItemTextBig} onPress={() => onStationClick(train.timeTableRows[0].stationShortCode)}>{train.timeTableRows[0].stationShortCode}</Text>
+              <Text style={[styles.summaryItemTextBig, {fontSize:summaryItemTextBigFontSize}]} onPress={() => onStationClick(train.timeTableRows[0].stationShortCode, train.timeTableRows[0].stationName)}>{train.timeTableRows[0].stationName}</Text>
             </View>
             <View style={styles.summaryItem}>
               <Ionicons name="arrow-forward" size={35} color="#ffffff"/>
             </View>
             <View style={styles.summaryItem}>
               <Text style={styles.summaryItemTextSmall}>To</Text>
-              <Text style={styles.summaryItemTextBig} onPress={() => onStationClick(train.timeTableRows[train.timeTableRows.length-1].stationShortCode)}>{train.timeTableRows[train.timeTableRows.length-1].stationShortCode}</Text>
+              <Text style={[styles.summaryItemTextBig, {fontSize:summaryItemTextBigFontSize}]} onPress={() => onStationClick(train.timeTableRows[train.timeTableRows.length-1].stationShortCode, train.timeTableRows[train.timeTableRows.length-1].stationName)}>{train.timeTableRows[train.timeTableRows.length-1].stationName}</Text>
             </View>
           </View>
           <ScrollView>
@@ -89,7 +109,7 @@ const TrainDetailsScreen = ({ route, navigation }) => {
     
                 return(
                   <View key={index} style={[styles.scheduleRow, (passedStation && styles.passed), { backgroundColor: colors.card, borderColor: colors.border }]}>
-                    <Text style={{width: '15%', color: colors.text}} onPress={() => onStationClick(item.stationShortCode)}>{item.stationShortCode}</Text>
+                    <Text style={{width: '25%', color: colors.text}} onPress={() => onStationClick(item.stationShortCode, item.stationName)}>{item.stationName}</Text>
                     <Text style={{width: '25%', color: colors.text}}>{item.type}</Text>
                     <Text style={{width: '20%', color: colors.text}}>{item.commercialTrack}</Text>
                     <View style={styles.scheduleTimeCol}>
@@ -130,14 +150,13 @@ const styles = StyleSheet.create({
   summaryBox: {
     backgroundColor: '#00b451',
     height: 150,
-    justifyContent: 'space-evenly',
+    justifyContent: 'space-around',
     flexDirection: 'row',
     alignItems: 'center',
   },
   summaryItem: {
-    flex: 1,
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   summaryItemTextSmall: {
     color: '#ffffff',
@@ -145,7 +164,6 @@ const styles = StyleSheet.create({
   },
   summaryItemTextBig: {
     color: '#ffffff',
-    fontSize: 30,
     fontWeight: 'bold'
   },
   scheduleRow: {

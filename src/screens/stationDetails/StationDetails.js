@@ -9,22 +9,24 @@ import {
 } from 'react-native';
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
-
 import Spinner from '../../components/Spinner';
+import { useTheme } from '@react-navigation/native';
 
-import {getStation} from '../../API/VR';
-import {
-  deleteFavoriteStation,
-  checkIfFavoriteExists,
-  addFavoriteStation,
-} from '../../db/FavoriteStations';
-
+import { getStation } from '../../API/VR';
+import { deleteFavoriteStation, checkIfFavoriteExists, addFavoriteStation, } from '../../db/FavoriteStations';
+import { fetchStationName } from '../../db/VRIStations';
 import { dateToString } from '../../util/Util';
 
 const StationDetailsScreen = ({ route, navigation }) => {
-  const { shortCode } = route.params;
+  const { colors } = useTheme();
+  const { shortCode, stationName } = route.params;
   const [departures, setDepartures] = useState([]);
   const [isFavorite, setIsFavorite] = useState(false);
+
+  const getStationName = async (stationShortCode) =>{
+    let data = await fetchStationName(stationShortCode).catch(console.error);
+    return (data.length > 0) ? data[0].stationName : "";
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -57,6 +59,7 @@ const StationDetailsScreen = ({ route, navigation }) => {
             departureDate: departureDate,
             delayed: item.differenceInMinutes > 0,
             differenceInMinutes: item.differenceInMinutes,
+            destinationStationName: "",
           });
         });
       });
@@ -64,6 +67,11 @@ const StationDetailsScreen = ({ route, navigation }) => {
       dep.sort((a, b) => {
         return new Date(a.departureDate) - new Date(b.departureDate);
       });
+
+      for(let i = 0; i < dep.length; ++i)
+      {
+        dep[i].destinationStationName = await getStationName(dep[i].destination);
+      }
 
       setDepartures(dep);
     };
@@ -75,15 +83,16 @@ const StationDetailsScreen = ({ route, navigation }) => {
 
     checkIfFavorite();
     fetchData().catch(console.error);
-  }, []);
+  }, [stationName]);
 
   useEffect(() => {
-    navigation.setOptions({title: shortCode});
-  }, []);
+    navigation.setOptions({title: stationName});
+  }, [stationName]);
 
-  const onDestinationPress = destination => {
+  const onDestinationPress = (destination, destinationStationName) => {
     navigation.push('Station Details', {
       shortCode: destination,
+      stationName: destinationStationName,
     });
   };
 
@@ -124,14 +133,14 @@ const StationDetailsScreen = ({ route, navigation }) => {
             {
               departures.map((departure, index) => {
                 return(
-                  <View key={index} style={styles.departures}>
-                    <Text onPress={() => onDestinationPress(departure.destination)}>{departure.destination}</Text>
-                    <Text onPress={() => onDeparturePress(departure.trainNumber)}>{(departure.commuterLineID) ? departure.commuterLineID : `${departure.trainType}${departure.trainNumber}`}</Text>
-                    <Text>{departure.track}</Text>
+                  <View key={index} style={[styles.departures, {backgroundColor: colors.card, borderColor: colors.border}]}>
+                    <Text style={{width: '25%', color: colors.text}} onPress={() => onDestinationPress(departure.destination, departure.destinationStationName)}>{departure.destinationStationName}</Text>
+                    <Text style={{width: '20%', color: colors.text}} onPress={() => onDeparturePress(departure.trainNumber)}>{(departure.commuterLineID) ? departure.commuterLineID : `${departure.trainType}${departure.trainNumber}`}</Text>
+                    <Text style={{width: '10%', color: colors.text}}>{departure.track}</Text>
                     <View style={styles.scheduleTimeCol}>
                       <View style={styles.scheduleTime}>
-                        <Ionicons name="time-outline" size={15} color="#000000"/>
-                        <Text>{dateToString(departure.departureDate)}</Text>
+                        <Ionicons name="time-outline" size={15} color={colors.text} />
+                        <Text style={{ color: colors.text }}>{dateToString(departure.departureDate)}</Text>
                       </View>
                       <View style={styles.scheduleDifference}>
                         {(departure.delayed) ? (
