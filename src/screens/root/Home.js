@@ -29,11 +29,11 @@ const HomeScreen = ({navigation}) => {
     });
   };
 
-  useEffect(() => {
+  if (stationList.length === 0) {
     fetchAllStations()
     .then((stations) => setStationList(stations))
     .catch(console.error);
-  }, []);
+  }
 
   return (
     <SafeAreaView style={styles.homeView}>
