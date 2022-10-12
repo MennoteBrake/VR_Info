@@ -34,13 +34,9 @@ const MapScreen = ({ navigation }) => {
       setTrackNotifications(data);
     };
 
-    const checkPermission = async () => {
-      const hasPerm = await hasLocationPermission();
-    };
-
     fetchTrainData().catch(console.error);
     fetchTrackNotifications().catch(console.error);
-    checkPermission().catch(console.error);
+    hasLocationPermission().catch(console.error);
 
     const interval = setInterval(() => {
       fetchTrainData().catch(console.error);

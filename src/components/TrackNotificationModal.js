@@ -1,6 +1,7 @@
 import { Text, View, StyleSheet } from "react-native";
 import { useTheme } from '@react-navigation/native';
 import GestureRecognizer from 'react-native-swipe-gestures';
+import { dateToString } from "../util/Util";
 
 /**
  * Displays a view with detailed information of the track notification
@@ -22,9 +23,8 @@ const TrackNotificationModal = ({ visibility, properties, onClose }) => {
   const startDate = new Date(properties.startDate);
   const endDate = new Date(properties.endDate);
 
-  // convert to correct time notation, e.g. 12:1 should be 12:01
-  const startDateTime = (startDate.getHours() < 10 ? '0' : '') + startDate.getHours() + ":" + (startDate.getMinutes() < 10 ? '0' : '') + startDate.getMinutes();
-  const endDateTime = (endDate.getHours() < 10 ? '0' : '') + endDate.getHours() + ":" + (endDate.getMinutes() < 10 ? '0' : '') + endDate.getMinutes();
+  const startDateTime = dateToString(startDate);
+  const endDateTime = dateToString(endDate);
 
   let renderStartDate = `From ${startDate.toLocaleDateString("en-FI", { weekday: 'long' })} ${startDateTime}`;
   let renderEndDate = "";

@@ -12,17 +12,15 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import Spinner from '../../components/Spinner';
 import { useTheme } from '@react-navigation/native';
 
-import {getStation} from '../../API/VR';
+import { getStation } from '../../API/VR';
 import { deleteFavoriteStation, checkIfFavoriteExists, addFavoriteStation, } from '../../db/FavoriteStations';
-import {fetchStationName} from '../../db/VRIStations'
+import { fetchStationName } from '../../db/VRIStations';
+import { dateToString } from '../../util/Util';
 
-const StationDetailsScreen = ({route, navigation}) => {
+const StationDetailsScreen = ({ route, navigation }) => {
   const { colors } = useTheme();
-  const {shortCode} = route.params;
-  const {stationName} = route.params;
-
+  const { shortCode, stationName } = route.params;
   const [departures, setDepartures] = useState([]);
-
   const [isFavorite, setIsFavorite] = useState(false);
 
   const getStationName = async (stationShortCode) =>{
@@ -132,43 +130,30 @@ const StationDetailsScreen = ({route, navigation}) => {
             </TouchableOpacity>
           </View>
           <ScrollView>
-            {departures.map((departure, index) => {
-              return (
-                <View key={index} style={[styles.departures, {backgroundColor: colors.card, borderColor: colors.border}]}>
-                  <Text style={{width: '25%', color: colors.text}}
-                    onPress={() => onDestinationPress(departure.destination, departure.destinationStationName)}>
-                    {departure.destinationStationName}
-                  </Text>
-                  <Text style={{width: '20%', color: colors.text}}
-                    onPress={() => onDeparturePress(departure.trainNumber)}>
-                    {departure.commuterLineID
-                      ? departure.commuterLineID
-                      : `${departure.trainType}${departure.trainNumber}`}
-                  </Text>
-                  <Text style={{width: '10%', color: colors.text}}>{departure.track}</Text>
-                  <View style={styles.scheduleTimeCol}>
-                    <View style={styles.scheduleTime}>
-                      <Ionicons name="time-outline" size={15} color={colors.text} />
-                      <Text style={{color: colors.text}} >
-                        {`${departure.departureDate.getHours()}:${
-                        (departure.departureDate.getMinutes() < 10 ? '0' : '') +
-                        departure.departureDate.getMinutes()
-                      }`}</Text>
-                    </View>
-                    <View style={styles.scheduleDifference}>
-                      {departure.delayed ? (
-                        <Text
-                          style={
-                            styles.delay
-                          }>{`+${departure.differenceInMinutes}`}</Text>
-                      ) : (
-                        <Text style={styles.onTime}>On time</Text>
-                      )}
+            {
+              departures.map((departure, index) => {
+                return(
+                  <View key={index} style={[styles.departures, {backgroundColor: colors.card, borderColor: colors.border}]}>
+                    <Text style={{width: '25%', color: colors.text}} onPress={() => onDestinationPress(departure.destination, departure.destinationStationName)}>{departure.destinationStationName}</Text>
+                    <Text style={{width: '20%', color: colors.text}} onPress={() => onDeparturePress(departure.trainNumber)}>{(departure.commuterLineID) ? departure.commuterLineID : `${departure.trainType}${departure.trainNumber}`}</Text>
+                    <Text style={{width: '10%', color: colors.text}}>{departure.track}</Text>
+                    <View style={styles.scheduleTimeCol}>
+                      <View style={styles.scheduleTime}>
+                        <Ionicons name="time-outline" size={15} color={colors.text} />
+                        <Text style={{ color: colors.text }}>{dateToString(departure.departureDate)}</Text>
+                      </View>
+                      <View style={styles.scheduleDifference}>
+                        {(departure.delayed) ? (
+                          <Text style={styles.delay}>{`+${departure.differenceInMinutes}`}</Text>
+                        ) : (
+                          <Text style={styles.onTime}>On time</Text>
+                        )}
+                      </View>
                     </View>
                   </View>
-                </View>
-              );
-            })}
+                );
+              })
+            }
           </ScrollView>
         </SafeAreaView>
       )}

@@ -31,13 +31,13 @@ export const addStation = (
         () => {
           resolve();
         },
-        (_, err) => {
+        (err) => {
           reject(err);
-        },
-      );
+        }
+        );
     });
-  });
-  return promise;
+});
+return promise;
 };
 export const updateStation = (
   id,
@@ -68,7 +68,7 @@ export const updateStation = (
         () => {
           resolve();
         },
-        (_, err) => {
+        (err) => {
           reject(err);
         },
       );
@@ -86,8 +86,7 @@ export const fetchAllStations = () => {
         (tx, result) => {
           resolve(result.rows.raw()); 
         },
-        (tx, err) => {
-          console.log(err);
+        (err) => {
           reject(err);
         },
       );
@@ -105,8 +104,7 @@ export const fetchStationName = stationShortCode => {
         (tx, result) => {
           resolve(result.rows.raw()); 
         },
-        (tx, err) => {
-          console.log(err);
+        (err) => {
           reject(err);
         },
       );

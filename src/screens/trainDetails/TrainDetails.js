@@ -1,10 +1,5 @@
 import { useEffect, useState } from 'react';
-import {
-  SafeAreaView,
-  View,
-  Text,
-  StyleSheet,
-} from 'react-native';
+import { SafeAreaView, View, Text, StyleSheet } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useTheme } from '@react-navigation/native';
@@ -12,10 +7,8 @@ import { useTheme } from '@react-navigation/native';
 import Spinner from '../../components/Spinner';
 
 import { getTrainInfo } from '../../API/VR';
-
-import {fetchStationName} from '../../db/VRIStations'
-
-import {selectMaximumFontSize} from '../../util/Util'
+import { fetchStationName } from '../../db/VRIStations'
+import { selectMaximumFontSize, dateToString } from '../../util/Util'
 
 const TrainDetailsScreen = ({ route, navigation }) => {
   const { colors } = useTheme();
@@ -122,7 +115,7 @@ const TrainDetailsScreen = ({ route, navigation }) => {
                     <View style={styles.scheduleTimeCol}>
                       <View style={styles.scheduleTime}>
                         <Ionicons name="time-outline" size={15} color={colors.text}/>
-                        <Text style={{color: colors.text}}>{`${scheduledTime.getHours()}:${(scheduledTime.getMinutes() < 10 ? '0' : '') + scheduledTime.getMinutes()}`}</Text>
+                        <Text style={{color: colors.text}}>{dateToString(scheduledTime)}</Text>
                       </View>
                       <View>
                         {(item.differenceInMinutes > 0) ? (

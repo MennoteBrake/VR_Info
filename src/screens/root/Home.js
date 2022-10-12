@@ -1,29 +1,26 @@
-import React, {useState} from 'react';
-import {SafeAreaView, Text, StyleSheet, View} from 'react-native';
-import {useTheme} from '@react-navigation/native';
+import React, { useState } from 'react';
+import { SafeAreaView, Text, StyleSheet, View } from 'react-native';
+import { useTheme } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
-import {SearchBar} from '../../components/SearchBar';
-import {fetchAllPassengerStations} from '../../db/VRIStations';
-import {fetchAllFavoriteStations} from '../../db/FavoriteStations';
+import SearchBar from '../../components/SearchBar';
+import { fetchAllPassengerStations } from '../../db/VRIStations';
+import { fetchAllFavoriteStations } from '../../db/FavoriteStations';
 import DisplaySearchResults from '../../components/DisplaySearchResults';
 
 const HomeScreen = ({navigation}) => {
+  const [station, setStation] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [isInputFieldEmpty, setInputFieldEmpty] = useState(true);
   const [stationList, setStationList] = useState([]);
   const amountOfItemsToDisplay = 20;
 
-  function addToSearchList(item) {
-    setSearchResults(searchResults => [...searchResults, item]);
-  }
-
   const filterStations = (textToFilter, list) => {
-    list
-      .filter(item =>
-        item.stationName.toLowerCase().includes(textToFilter.toLowerCase()),
-      )
-      .map(item => addToSearchList(item));
+    const filtered = list.filter((item) =>
+      item.stationName.toLowerCase().includes(textToFilter.toLowerCase())
+    );
+
+    setSearchResults(filtered);
   };
 
   const navigateOnPress = displayItem => {
@@ -34,18 +31,26 @@ const HomeScreen = ({navigation}) => {
   };
 
   if (stationList.length === 0) {
-    getAllStations(setStationList);
+    fetchAllPassengerStations()
+    .then((stations) => setStationList(stations))
+    .catch(console.error);
   }
 
   return (
     <SafeAreaView style={styles.homeView}>
-      <SearchBar
-        list={stationList}
-        filterSearchResults={filterStations}
-        searchResults={searchResults}
-        setSearchResults={setSearchResults}
-        setInputFieldEmpty={setInputFieldEmpty}
-      />
+      <View style={styles.searchBarContainer}>
+        <SearchBar
+          placeholder="Search station"
+          list={stationList}
+          filterSearchResults={filterStations}
+          searchResults={searchResults}
+          setSearchResults={setSearchResults}
+          setInputFieldEmpty={setInputFieldEmpty}
+          styles={styles.searchBar}
+          value={station}
+          onChangeValue={setStation}
+        />
+      </View>
 
       <DisplaySearchResults
         searchResults={searchResults}
@@ -59,15 +64,6 @@ const HomeScreen = ({navigation}) => {
       />
     </SafeAreaView>
   );
-};
-
-const getAllStations = async setStationList => {
-  try {
-    const data = await fetchAllPassengerStations();
-    setStationList(data);
-  } catch (err) {
-    console.log(err);
-  }
 };
 
 /**
@@ -106,6 +102,19 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'flex-start',
     alignItems: 'center',
+  },
+  searchBarContainer: {
+    width: '100%',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    paddingTop: 10
+  },
+  searchBar: {
+    borderWidth: 2,
+    borderRadius: 20,
+    width: '95%',
+    height: 30,
+    textAlign: 'center',
   },
   results: {
     width: '95%',

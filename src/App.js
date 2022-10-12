@@ -1,18 +1,22 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useContext } from 'react';
 import { SafeAreaView, StatusBar, StyleSheet } from 'react-native';
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+
+import { ApolloProvider } from '@apollo/client';
+import { client } from './API/GraphQL';
 
 import { ThemeProvider, ThemeContext } from './contexts/Context';
 
 import RootScreen from './screens/root/Root';
 import TrainDetailsScreen from './screens/trainDetails/TrainDetails';
 import StationDetailsScreen from './screens/stationDetails/StationDetails';
+import JourneyPlannerRouteScreen from './screens/root/planner/JourneyPlannerRoute';
 
-import {initDB} from './db/VRIdb';
-import {addStation} from './db/VRIStations';
-import {getStations} from './API/VR';
+import { initDB } from './db/VRIdb';
+import { addStation } from './db/VRIStations';
+import { getStations } from './API/VR';
 
 const Stack = createNativeStackNavigator();
 
@@ -24,14 +28,13 @@ const NewDarkTheme = {
   }
 }
 
-const NewDefaultTheme = {
+const LightTheme = {
   ...DefaultTheme,
   colors:{
     ...DefaultTheme.colors,
     stationIcon: '#adadad'
   }
 }
-
 
 initDB()
   .then(() => {
@@ -42,11 +45,16 @@ initDB()
   });
 
 const App = () => {
-  insertStationsToDB().catch(console.error);
+  useEffect(() => {
+    insertStationsToDB()
+    .catch((err) => console.log(err));
+  }, []);
 
   return (
     <ThemeProvider>
-      <MainComponent />
+      <ApolloProvider client={client}>
+        <MainComponent />
+      </ApolloProvider>
     </ThemeProvider>
   );
 };
@@ -58,12 +66,13 @@ const MainComponent = () => {
     <SafeAreaView style={[styles.container, ((theme === "dark") && styles.darkContainer)]}>
       <StatusBar
         barStyle={(theme === "dark") ? "light-content" : "dark-content"}
-        backgroundColor={(theme === "dark") ? NewDarkTheme.colors.background : NewDefaultTheme.colors.background} />
-      <NavigationContainer theme={(theme === "dark") ? NewDarkTheme : NewDefaultTheme}>
+        backgroundColor={(theme === "dark") ? NewDarkTheme.colors.background : LightTheme.colors.background} />
+      <NavigationContainer theme={(theme === "dark") ? NewDarkTheme : LightTheme}>
         <Stack.Navigator initialRouteName="Root">
           <Stack.Screen name="Root" component={RootScreen} options={{ headerShown: false }} />
           <Stack.Screen name="Train Details" component={TrainDetailsScreen} />
           <Stack.Screen name="Station Details" component={StationDetailsScreen} />
+          <Stack.Screen name="Route" component={JourneyPlannerRouteScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </SafeAreaView>
@@ -71,23 +80,20 @@ const MainComponent = () => {
 };
 
 const insertStationsToDB = async () => {
-  const station = " asema"; // station in Finnish
-  let data = await getStations();
-  
-  {
-    data.map((item, index) =>
-      addStation(
-        item.passengerTraffic,
-        item.type,
-        (item.stationName.replace(station, "")),
-        item.stationShortCode,
-        item.stationUICCode,
-        item.countryCode,
-        item.longitude,
-        item.latitude,
-      ),
-    );
-  }
+  const stationPostfix = " asema";
+  const stations = await getStations();
+  stations.forEach((station) => {
+    addStation(
+      station.passengerTraffic,
+      station.type,
+      (station.stationName.replace(stationPostfix, "")),
+      station.stationShortCode,
+      station.stationUICCode,
+      station.countryCode,
+      station.longitude,
+      station.latitude,
+    ).catch(console.error)
+  });
 };
 
 const styles = StyleSheet.create({
