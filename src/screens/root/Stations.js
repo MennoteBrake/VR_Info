@@ -8,7 +8,7 @@ import { fetchAllPassengerStations } from '../../db/VRIStations';
 import { fetchAllFavoriteStations } from '../../db/FavoriteStations';
 import DisplaySearchResults from '../../components/DisplaySearchResults';
 
-const HomeScreen = ({navigation}) => {
+const StationsScreen = ({navigation}) => {
   const [station, setStation] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [isInputFieldEmpty, setInputFieldEmpty] = useState(true);
@@ -37,7 +37,7 @@ const HomeScreen = ({navigation}) => {
   }
 
   return (
-    <SafeAreaView style={styles.homeView}>
+    <SafeAreaView style={styles.container}>
       <View style={styles.searchBarContainer}>
         <SearchBar
           placeholder="Search station"
@@ -98,7 +98,7 @@ const DisplayStationSearchResults = par => {
 };
 
 const styles = StyleSheet.create({
-  homeView: {
+  container: {
     flex: 1,
     justifyContent: 'flex-start',
     alignItems: 'center',
@@ -138,4 +138,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default HomeScreen;
+export default StationsScreen;
