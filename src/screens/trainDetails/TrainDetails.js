@@ -16,6 +16,7 @@ const TrainDetailsScreen = ({ route, navigation }) => {
 
   const [train, setTrain] = useState({
     trainNumber: 0,
+    trainCategory: "",
     timeTableRows: [
       {
         stationShortCode: "UNK"
@@ -59,6 +60,11 @@ const TrainDetailsScreen = ({ route, navigation }) => {
   }, [trainNumber]);
 
   useEffect(() => {
+    if(!train.trainNumber) {
+      navigation.setOptions({ title: "Loading..."})
+      return;
+    }
+
     navigation.setOptions({ title: `${train.trainCategory} train ${train.trainNumber}`})
   }, [train]);
 

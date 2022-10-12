@@ -114,8 +114,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     width: '95%',
     height: 50,
-    paddingLeft: 20,
-    paddingRight: 20
+    paddingLeft: 20
   },
   results: {
     width: '95%',

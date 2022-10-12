@@ -6,7 +6,7 @@ import DatePicker from 'react-native-date-picker';
 
 import SearchBar from '../../../components/SearchBar';
 import JourneyPlannerRoutes from './JourneyPlannerRoutes';
-import { fetchAllStations } from '../../../db/VRIStations';
+import { fetchAllPassengerStations } from '../../../db/VRIStations';
 import StationSearchResults from '../../../components/StationSearchResults';
 
 const JourneyPlannerScreen = ({ navigation }) => {
@@ -72,7 +72,7 @@ const JourneyPlannerScreen = ({ navigation }) => {
   };
 
   useEffect(() => {
-    fetchAllStations()
+    fetchAllPassengerStations()
     .then((data) => setStationList(data))
     .catch((e) => console.log(e));
   }, []);
