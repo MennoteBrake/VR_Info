@@ -79,7 +79,7 @@ const TrainDetailsScreen = ({ route, navigation }) => {
   const selectCorrectFontSize = (text1, text2) => 
   {
     let txt = (text1.length > text2.length) ? text1 : text2;
-    let size = selectMaximumFontSize(txt, '30%');
+    let size = selectMaximumFontSize(txt, '29%');
 
     if(size < summaryItemTextBigFontSize)
     {
