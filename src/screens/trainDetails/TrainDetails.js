@@ -157,14 +157,13 @@ const styles = StyleSheet.create({
   summaryBox: {
     backgroundColor: '#00b451',
     height: 150,
-    justifyContent: 'space-evenly',
+    justifyContent: 'space-around',
     flexDirection: 'row',
     alignItems: 'center',
   },
   summaryItem: {
-    flex: 1,
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   summaryItemTextSmall: {
     color: '#ffffff',
