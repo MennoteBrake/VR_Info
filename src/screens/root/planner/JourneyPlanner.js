@@ -65,6 +65,12 @@ const JourneyPlannerScreen = ({ navigation }) => {
     setSearchResultsTo([]);
   }
 
+  const onSearchPress = () => {
+    if(!from || !to || !fromStationName || !toStationName) return;
+    
+    setShowRoutes(true);
+  };
+
   useEffect(() => {
     fetchAllStations()
     .then((data) => setStationList(data))
@@ -128,7 +134,7 @@ const JourneyPlannerScreen = ({ navigation }) => {
           />
         </View>
         <View style={styles.button}>
-          <Button onPress={() => setShowRoutes(true)} title="Search" />
+          <Button onPress={onSearchPress} title="Search" />
         </View>
         {
           (showRoutes && (

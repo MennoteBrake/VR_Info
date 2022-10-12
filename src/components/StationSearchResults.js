@@ -11,8 +11,8 @@ const StationSearchResults = ({ results, onResultPress }) => {
         {
           results.map((station, index) => {
             return(
-              <View style={[styles.resultRow, { borderColor: colors.border }]}>
-                <Text key={index} onPress={() => onResultPress(station)} style={[styles.result, { color: colors.text }]}>{station.stationName}</Text>
+              <View key={index} style={[styles.resultRow, { borderColor: colors.border }]}>
+                <Text onPress={() => onResultPress(station)} style={[styles.result, { color: colors.text }]}>{station.stationName}</Text>
               </View>
             );
           })

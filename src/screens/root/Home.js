@@ -45,7 +45,7 @@ const HomeScreen = ({navigation}) => {
           searchResults={searchResults}
           setSearchResults={setSearchResults}
           setInputFieldEmpty={setInputFieldEmpty}
-          styles={styles.searchBar}
+          customStyles={styles.searchBar}
           value={station}
           onChangeValue={setStation}
         />
@@ -114,6 +114,8 @@ const styles = StyleSheet.create({
     width: '95%',
     height: 30,
     textAlign: 'center',
+    paddingLeft: 20,
+    paddingRight: 20
   },
   results: {
     width: '95%',
