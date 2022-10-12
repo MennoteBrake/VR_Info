@@ -36,8 +36,9 @@ const SearchBar = ({ placeholder, value, onChangeValue, list, filterSearchResult
   };
 
   return (
-    <View style={[styles.container, customStyles, { borderColor: colors.border, color: colors.text, backgroundColor: colors.card }]}>
+    <View style={[styles.container, customStyles,{borderColor: colors.border, backgroundColor: colors.card}]}>
       <TextInput
+        style={[styles.textInput, {color: colors.text}]}
         placeholder={placeholder}
         placeholderTextColor= {colors.text}
         onChangeText={filterText =>
@@ -54,7 +55,10 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
+  },
+  textInput: {
+    width:"100%"
   }
 });
 
