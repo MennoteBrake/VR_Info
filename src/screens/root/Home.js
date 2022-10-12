@@ -45,12 +45,7 @@ const HomeScreen = ({navigation}) => {
           searchResults={searchResults}
           setSearchResults={setSearchResults}
           setInputFieldEmpty={setInputFieldEmpty}
-          styles={{
-            borderWidth: 2,
-            borderRadius: 20,
-            width: '95%',
-            textAlign: 'center',
-          }}
+          styles={styles.searchBar}
           value={station}
           onChangeValue={setStation}
         />
@@ -112,6 +107,13 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     alignItems: 'center',
     paddingTop: 10
+  },
+  searchBar: {
+    borderWidth: 2,
+    borderRadius: 20,
+    width: '95%',
+    height: 30,
+    textAlign: 'center',
   },
   results: {
     width: '95%',

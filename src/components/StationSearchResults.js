@@ -1,4 +1,4 @@
-import { ScrollView, Text } from "react-native";
+import { ScrollView, View, Text } from "react-native";
 import { StyleSheet } from "react-native";
 import { useTheme } from '@react-navigation/native';
 
@@ -10,7 +10,11 @@ const StationSearchResults = ({ results, onResultPress }) => {
       <ScrollView style={styles.container}>
         {
           results.map((station, index) => {
-            return(<Text key={index} onPress={() => onResultPress(station)} style={[styles.result, { color: colors.text }]}>{station.stationName}</Text>);
+            return(
+              <View style={[styles.resultRow, { borderColor: colors.border }]}>
+                <Text key={index} onPress={() => onResultPress(station)} style={[styles.result, { color: colors.text }]}>{station.stationName}</Text>
+              </View>
+            );
           })
         }
       </ScrollView>
@@ -21,6 +25,9 @@ const StationSearchResults = ({ results, onResultPress }) => {
 const styles = StyleSheet.create({
   container: {
     marginTop: 10
+  },
+  resultRow: {
+    borderBottomWidth: StyleSheet.hairlineWidth
   },
   result: {
     fontWeight: 'bold',

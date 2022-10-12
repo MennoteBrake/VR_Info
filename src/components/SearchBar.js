@@ -11,7 +11,7 @@ import { useTheme } from '@react-navigation/native';
  * @param setInputFieldEmpty a function to set a boolean variable that is describing if the input field is empty or not (true == empty, false == not empty)
  * @param styles Object containing custom styling for the search bar. Optional.
  */
-export const SearchBar = ({ placeholder, value, onChangeValue, list, filterSearchResults, setSearchResults, setInputFieldEmpty, styles }) => {
+const SearchBar = ({ placeholder, value, onChangeValue, list, filterSearchResults, setSearchResults, setInputFieldEmpty, styles }) => {
   const { colors } = useTheme();
 
   const filterList = (textToFilter, filterFunc, list) => {
