@@ -173,12 +173,10 @@ const styles = StyleSheet.create({
   seperatorContainer: {
     flexDirection: 'row',
     justifyContent: 'space-evenly',
-    alignItems: 'center',
+    alignItems: 'center'
   },
   seperator: {
     borderBottomWidth: StyleSheet.hairlineWidth,
-    marginTop: 7,
-    marginBottom: 7,
     width: '40%'
   },
   card: {
