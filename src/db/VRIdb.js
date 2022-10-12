@@ -17,7 +17,7 @@ const basicSqlQuery = sqlStatement => {
         () => {
           resolve();
         },
-        (_, err) => {
+        (err) => {
           reject(err);
         },
       );

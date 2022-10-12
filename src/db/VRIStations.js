@@ -124,7 +124,7 @@ export const fetchAllPassengerStations = () => {
         (tx, result) => {
           resolve(result.rows.raw()); 
         },
-        (tx, err) => {
+        (err) => {
           console.log(err);
           reject(err);
         },

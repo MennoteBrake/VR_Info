@@ -28,3 +28,12 @@ import {Dimensions, PixelRatio} from 'react-native';
   const elemHeight = parseFloat(heightPercent);
   return PixelRatio.roundToNearestPixel((screenHeight * elemHeight) / 100);
 };
+
+/**
+ * 
+ * @param {*} text the text you want to know the maximum font of
+ * @param {*} width the width of the component you are putting the text in. Needs to be a string, with %. E.g. '30%'
+ */
+export const selectMaximumFontSize = (text, width) =>{
+    return Math.round(widthPercentageToDP(width) / (text.length / 2));
+}

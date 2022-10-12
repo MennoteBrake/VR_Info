@@ -15,7 +15,7 @@ import { getTrainInfo } from '../../API/VR';
 
 import {fetchStationName} from '../../db/VRIStations'
 
-import {widthPercentageToDP} from '../../util/Util'
+import {selectMaximumFontSize} from '../../util/Util'
 
 const TrainDetailsScreen = ({ route, navigation }) => {
   const { colors } = useTheme();
@@ -79,8 +79,8 @@ const TrainDetailsScreen = ({ route, navigation }) => {
   const selectCorrectFontSize = (text1, text2) => 
   {
     let txt = (text1.length > text2.length) ? text1 : text2;
+    let size = selectMaximumFontSize(txt, '30%');
 
-    let size = Math.round(widthPercentageToDP('30%') / (txt.length / 2));
     if(size < summaryItemTextBigFontSize)
     {
       setSummaryItemTextBigFontSize(size);

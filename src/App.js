@@ -71,7 +71,7 @@ const MainComponent = () => {
 };
 
 const insertStationsToDB = async () => {
-  const station = " asema"; // station in Finish
+  const station = " asema"; // station in Finnish
   let data = await getStations();
   
   {

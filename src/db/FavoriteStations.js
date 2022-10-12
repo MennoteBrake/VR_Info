@@ -11,7 +11,7 @@ export const addFavoriteStation = stationShortCode => {
         () => {
           resolve();
         },
-        (_, err) => {
+        (err) => {
           reject(err);
         },
       );
@@ -29,7 +29,7 @@ export const deleteFavoriteStation = stationShortCode => {
         () => {
           resolve();
         },
-        (_, err) => {
+        (err) => {
           reject(err);
         },
       );
@@ -49,8 +49,7 @@ export const checkIfFavoriteExists = stationShortCode => {
         (tx, result) => {
           resolve(result.rows.length > 0);
         },
-        (tx, err) => {
-          console.log(err);
+        (err) => {
           reject(err);
         },
       );
@@ -74,8 +73,7 @@ export const fetchAllFavoriteStations = () => {
         (tx, result) => {
           resolve(result.rows.raw());
         },
-        (tx, err) => {
-          console.log(err);
+        (err) => {
           reject(err);
         },
       );
