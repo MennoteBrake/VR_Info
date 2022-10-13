@@ -1,8 +1,9 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useContext } from 'react';
 import { SafeAreaView, StatusBar, StyleSheet } from 'react-native';
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import SplashScreen from 'react-native-splash-screen';
 
 import { ApolloProvider } from '@apollo/client';
 import { client } from './API/GraphQL';
@@ -17,6 +18,7 @@ import JourneyPlannerRouteScreen from './screens/root/planner/JourneyPlannerRout
 import { initDB } from './db/VRIdb';
 import { addStation } from './db/VRIStations';
 import { getStations } from './API/VR';
+import { addSetting, fetchAllSettings, fetchSetting, darkThemeSettingName } from './db/AppSettings';
 
 const Stack = createNativeStackNavigator();
 
@@ -60,7 +62,28 @@ const App = () => {
 };
 
 const MainComponent = () => {
-  const { theme } = useContext(ThemeContext);
+  const { theme, setTheme } = useContext(ThemeContext);
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    const init = async () => {
+      const r = await initSettingsDB();
+      setReady(r);
+    };
+
+    init();
+  }, []);
+
+  useEffect(() => {
+    if(!ready) return;
+
+    fetchSetting(darkThemeSettingName)
+    .then((setting) => {
+      setTheme(setting[0].enabled ? "dark" : "light");
+      SplashScreen.hide();
+    })
+    .catch(console.error);
+  }, [ready]);
 
   return(
     <SafeAreaView style={[styles.container, ((theme === "dark") && styles.darkContainer)]}>
@@ -94,6 +117,22 @@ const insertStationsToDB = async () => {
       station.latitude,
     ).catch(console.error)
   });
+};
+
+const initSettingsDB = async () => {
+  let settingsLength = 0;
+
+  await fetchAllSettings().then((settings) => {
+    settingsLength = settings.length
+  })
+  .catch(console.error);
+
+  if (settingsLength < 1)
+  {
+    await addSetting(darkThemeSettingName, true).catch(console.error);
+  }
+
+  return true;
 };
 
 const styles = StyleSheet.create({
