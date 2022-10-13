@@ -5,7 +5,7 @@ const Spinner = () => {
   const [show, setShow] = useState(false);
 
   useEffect(() => {
-    let timer = setTimeout(() => setShow(true), 5000);
+    let timer = setTimeout(() => setShow(true), 7500);
 
     return () => {
       clearTimeout(timer);

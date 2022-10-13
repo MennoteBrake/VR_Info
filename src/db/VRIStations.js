@@ -36,9 +36,10 @@ export const addStation = (
         }
         );
     });
-});
-return promise;
+  });
+  return promise;
 };
+
 export const updateStation = (
   id,
   passengerTraffic,
