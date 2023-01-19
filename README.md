@@ -45,10 +45,6 @@ npm install
 npx react-native run-android
 ```
 
-#### How to get the APK on your Android phone
-```
-
-```
 ---------------
 ### iOS
 ```
